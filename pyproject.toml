@@ -1,0 +1,24 @@
+[project]
+name = "pdf-eater"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "streamlit>=1.56.0",
+    "langchain>=1.2.15",
+    "langchain-classic>=1.0.4",
+    "langchain-community>=0.4.1",
+    "langchain-openai>=1.2.0",
+    "langchain-text-splitters>=1.1.2",
+    "pdfminer.six>=20260107",
+    "docarray>=0.41.0",
+    "python-dotenv>=1.2.2",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+addopts = "--import-mode=prepend"
