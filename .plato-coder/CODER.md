@@ -4,9 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 启动规则
 加载本文件后，立即读取以下文件：
-- `./abs/CR.md`
-- `./abs/ARCHITECTURE.md`
-- `./abs/STANDARDS.md`
+- `./CR.md`
+- `./STANDARDS.md`
 
 ## Workflow Rules
 
