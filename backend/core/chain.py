@@ -1,14 +1,15 @@
 from langchain_openai import ChatOpenAI
 from langchain_classic.chains import ConversationalRetrievalChain
+from langchain_core.vectorstores import VectorStore
 from config import MODEL_NAME, TOP_K
 
 
-def create_chain(vectorstore):
+def create_chain(vectorstore: VectorStore):
     """
     Create a conversational retrieval chain from a vectorstore.
 
     Args:
-        vectorstore: A FAISS (or compatible) vectorstore instance.
+        vectorstore: Any VectorStore instance (e.g. FAISS).
 
     Returns:
         ConversationalRetrievalChain instance.
