@@ -1,30 +1,11 @@
 """
 Unit tests for backend/core modules.
 
-Run from the project root:
-    .venv\\Scripts\\python.exe -m pytest tests/unit/test_core.py -v
-
-The backend/ directory is injected into sys.path so that `from config import ...`
-inside the backend modules resolves correctly without installing the package.
+Run from the backend/ directory:
+    ../.venv/Scripts/python.exe -m pytest tests/unit/test_core.py -v
 """
 import sys
-import os
 import types
-
-# ---------------------------------------------------------------------------
-# Path setup — backend/ must be at position 0 before importing backend modules
-# ---------------------------------------------------------------------------
-BACKEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
-
-# Remove any stale 'core' entries from sys.modules so we always get backend/core
-for _key in list(sys.modules.keys()):
-    if _key == "core" or _key.startswith("core."):
-        del sys.modules[_key]
-
-# Ensure backend/ is at position 0 (pytest may have prepended rootdir which has root core/)
-if BACKEND_DIR in sys.path:
-    sys.path.remove(BACKEND_DIR)
-sys.path.insert(0, BACKEND_DIR)
 
 # ---------------------------------------------------------------------------
 # Stub out heavy optional packages that may not be installed in the test env

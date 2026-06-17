@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-PDF Eater is a PDF Q&A application. The current codebase is a Streamlit single-page app. There is an **active migration plan** (see [`.plato-kanban/PLAN.md`](.plato-kanban/PLAN.md)) to split it into a **React frontend + FastAPI backend**.
+PDF Eater is a PDF Q&A application. Currently migrating from a Streamlit single-page app to a **React frontend + FastAPI backend**. Task tracking: [`.plato-kanban/TASKS.md`](.plato-kanban/TASKS.md).
 
 ## Running the Current App
 

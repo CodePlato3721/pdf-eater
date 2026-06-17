@@ -17,7 +17,7 @@
 - `backend/core/chain.py`：原样迁移
 - `backend/config.py`：迁移常量，新增 `FAISS_INDEX_PATH`、`HISTORY_PATH`
 
-**验证**：单元测试 `tests/unit/test_core.py`，覆盖 `load_and_split`、`create_vectorstore`、`save/load_vectorstore`
+**验证**：单元测试 `backend/tests/unit/test_core.py`，覆盖 `load_and_split`、`create_vectorstore`、`save/load_vectorstore`
 
 session-id: 550e8400-e29b-41d4-a716-446655440001
 
@@ -35,7 +35,7 @@ session-id: 550e8400-e29b-41d4-a716-446655440001
 - `GET /api/status`：返回 `{ loaded, files }`，作为状态层的脚手架出口
 
 **验证**
-- 单元测试 `tests/unit/test_state.py`：mock `load_vectorstore` + `create_chain`，验证 `restore()` 在 faiss_index 存在时调用了两者且 `state.chain` 被正确赋值；验证 faiss_index 不存在时 `state.chain` 为 None
+- 单元测试 `backend/tests/unit/test_state.py`：mock `load_vectorstore` + `create_chain`，验证 `restore()` 在 faiss_index 存在时调用了两者且 `state.chain` 被正确赋值；验证 faiss_index 不存在时 `state.chain` 为 None
 - 人工：`uvicorn main:app` 启动无报错；`curl GET /api/status` 返回 `{"loaded": false, "files": []}`
 
 session-id: 550e8400-e29b-41d4-a716-446655440002
