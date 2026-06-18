@@ -19,7 +19,6 @@
 
 **验证**：单元测试 `backend/tests/unit/test_core.py`，覆盖 `load_and_split`、`create_vectorstore`、`save/load_vectorstore`
 
-session-id: 550e8400-e29b-41d4-a716-446655440001
 
 ---
 
@@ -38,7 +37,6 @@ session-id: 550e8400-e29b-41d4-a716-446655440001
 - 单元测试 `backend/tests/unit/test_state.py`：mock `load_vectorstore` + `create_chain`，验证 `restore()` 在 faiss_index 存在时调用了两者且 `state.chain` 被正确赋值；验证 faiss_index 不存在时 `state.chain` 为 None
 - 人工：`uvicorn main:app` 启动无报错；`curl GET /api/status` 返回 `{"loaded": false, "files": []}`
 
-session-id: 550e8400-e29b-41d4-a716-446655440002
 
 ---
 
@@ -57,7 +55,6 @@ session-id: 550e8400-e29b-41d4-a716-446655440002
 - `curl` 上传合法 PDF → `data/faiss_index/` 目录生成 + `GET /api/status` 返回 `{"loaded": true, "files": ["xxx.pdf"]}`
 - `curl` 上传非 PDF → 400；上传扫描件 → 400
 
-session-id: 550e8400-e29b-41d4-a716-446655440003
 
 ---
 
@@ -77,7 +74,6 @@ session-id: 550e8400-e29b-41d4-a716-446655440003
 - `curl -N -X POST /api/chat/stream -d '{"question":"..."}' -H 'Content-Type: application/json'` 收到逐 token SSE 输出
 - `DELETE /api/history` 后 `history.json` 清空或不存在
 
-session-id: 550e8400-e29b-41d4-a716-446655440004
 
 ---
 
@@ -98,7 +94,6 @@ session-id: 550e8400-e29b-41d4-a716-446655440004
 - 浏览器打开 `localhost:5173`，页面显示 `{"loaded": false, "files": []}` — 证明 proxy + api.js 全链路通
 - 验证后删除 `DevPage.jsx`，`App.jsx` 还原为空占位
 
-session-id: 550e8400-e29b-41d4-a716-446655440005
 
 ---
 
@@ -117,7 +112,6 @@ session-id: 550e8400-e29b-41d4-a716-446655440005
 - 上传非 PDF → 行内错误提示
 - 点击清除历史 → 文件名消失
 
-session-id: 550e8400-e29b-41d4-a716-446655440006
 
 ---
 
@@ -139,7 +133,6 @@ session-id: 550e8400-e29b-41d4-a716-446655440006
 - sources 折叠面板正常展开/收起
 - 回答完成前输入框禁用
 
-session-id: 550e8400-e29b-41d4-a716-446655440007
 
 ---
 
@@ -154,7 +147,6 @@ session-id: 550e8400-e29b-41d4-a716-446655440007
 
 **验证**：`uv sync` 输出不含 streamlit；`uvicorn main:app` + `npm run dev` 正常启动；项目根无 `app.py`
 
-session-id: 550e8400-e29b-41d4-a716-446655440008
 
 ---
 
