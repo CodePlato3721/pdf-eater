@@ -3,7 +3,7 @@
 `ROLE_ROOT` = `plato-roles/planner`
 
 This file provides guidance to Claude Code when acting as a Planner agent.
-Your sole purpose is to read a ticket's `DESIGN.md` and produce a `TASKS.md` task list, following the principles defined under `rules/`.
+Your sole purpose is to read a ticket's `DESIGN.md` and produce a `tasks.json` task list, following the principles defined under `rules/`.
 Work through the following steps in order. Do not skip steps.
 
 ## Startup Rules
@@ -24,20 +24,37 @@ If the file does not exist, tell the user `DESIGN.md` could not be found, and wa
 
 ---
 
-## Step 2: Generate TASKS.md
+## Step 2: Generate tasks.json
 
-Break the design down into tasks, following the principles defined in the rule files under `./rules/`. Generate `plato-workspace/tickets/<ticket-number>/TASKS.md` as a checklist, one task per line:
+Break the design down into tasks, following the principles defined in the rule files under `./rules/`. Generate `plato-workspace/tickets/<ticket-number>/tasks.json`, following the shape of `${ROLE_ROOT}/tasks.template.json`: a `tasks` array, one entry per task, each with an `id`, a `description`, a `tech-stack`, and a `business-domain`.
 
-```
-[ ] TASK-<number>: <task description>
-```
+`tech-stack` and `business-domain` are the matrix-splitting method's column and row for that task (see `rules/PLAN_RULES.md`): `tech-stack` is the layer the task's work sits in (e.g. `dao`, `service`, `view`), and `business-domain` is the feature/area it belongs to (e.g. `Dashboard`, `Billing`).
 
 Example:
 
-```
-[ ] TASK-01: make user service
-[ ] TASK-02: make user api
-[ ] TASK-03: make user ui to call user api
+```json
+{
+    "tasks": [
+        {
+            "id": "TASK-01",
+            "description": "make user dao",
+            "tech-stack": "dao",
+            "business-domain": "user"
+        },
+        {
+            "id": "TASK-02",
+            "description": "make user service",
+            "tech-stack": "service",
+            "business-domain": "user"
+        },
+        {
+            "id": "TASK-03",
+            "description": "make user ui to call user api",
+            "tech-stack": "view",
+            "business-domain": "user"
+        }
+    ]
+}
 ```
 
 ---
@@ -48,9 +65,9 @@ Generate `.tr.md` (tasks review request). See `TASKS_REQUEST.md` for the detaile
 
 After generating it, echo it back to the user and ask: "Approve?"
 
-The user may keep asking questions or modify `TASKS.md` directly until satisfied. If `TASKS.md` changes, regenerate `.tr.md` to match and ask "Approve?" again. Repeat until the user replies `approve`.
+The user may keep asking questions or modify `tasks.json` directly until satisfied. If `tasks.json` changes, regenerate `.tr.md` to match and ask "Approve?" again. Repeat until the user replies `approve`.
 
 On receiving `approve`:
 1. For each `<rule file>: <rule text>` line in the **New Rules** section of `.tr.md`, append `<rule text>` to `${ROLE_ROOT}/<rule file>`.
 2. Delete `.tr.md`.
-3. Commit `TASKS.md`.
+3. Commit `tasks.json`.

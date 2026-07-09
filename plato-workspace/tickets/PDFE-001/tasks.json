@@ -1,0 +1,52 @@
+{
+    "tasks": [
+        {
+            "id": "TASK-01",
+            "description": "将现有 core/ 迁移至 backend/core/，并将向量库从 DocArrayInMemorySearch 替换为 FAISS。",
+            "tech-stack": "backend-core",
+            "business-domain": "foundation"
+        },
+        {
+            "id": "TASK-02",
+            "description": "首次引入 FastAPI，实现全局状态单例（含启动恢复逻辑）和状态查询端点。",
+            "tech-stack": "backend-api",
+            "business-domain": "foundation"
+        },
+        {
+            "id": "TASK-03",
+            "description": "实现 PDF 上传端点，打通从文件接收到 chain 就绪的完整链路。",
+            "tech-stack": "backend-api",
+            "business-domain": "upload"
+        },
+        {
+            "id": "TASK-04",
+            "description": "实现 SSE 流式聊天端点和清除历史端点。",
+            "tech-stack": "backend-api",
+            "business-domain": "chat"
+        },
+        {
+            "id": "TASK-05",
+            "description": "首次引入 React，搭建前端脚手架和统一 API 调用层，用临时 DevPage 验证全链路连通。",
+            "tech-stack": "frontend-base",
+            "business-domain": "foundation"
+        },
+        {
+            "id": "TASK-06",
+            "description": "实现上传 hook 和 Sidebar 组件。",
+            "tech-stack": "frontend-ui",
+            "business-domain": "upload"
+        },
+        {
+            "id": "TASK-07",
+            "description": "实现流式聊天 hook 和聊天区全部组件，完成顶层布局整合。",
+            "tech-stack": "frontend-ui",
+            "business-domain": "chat"
+        },
+        {
+            "id": "TASK-08",
+            "description": "联调通过后删除 Streamlit 相关文件并更新架构文档。",
+            "tech-stack": "cleanup",
+            "business-domain": "foundation"
+        }
+    ]
+}

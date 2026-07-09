@@ -1,0 +1,34 @@
+{
+    "type": "feature",
+    "title": "",
+    "designer": {
+        "session-id": "",
+        "status": "DONE"
+    },
+    "planner": {
+        "session-id": "",
+        "mode":"manual",
+        "status": "DONE"
+    },
+    "coder": {
+        "status": "IN_PROGRESS",
+        "tasks": [
+            {
+                "id": "TASK-01",
+                "coder": {
+                    "session-id": "",
+                    "mode":"manual"
+                },
+                "status": "DONE"    
+            },
+            {
+                "id": "TASK-02",
+                "coder": {
+                    "session-id": "",
+                    "mode":"manual"
+                },
+                "status": "TODO"    
+            }
+        ]
+    } 
+}
