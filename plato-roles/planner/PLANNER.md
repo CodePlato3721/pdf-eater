@@ -1,5 +1,7 @@
 # PLANNER.md
 
+`ROLE_ROOT` = `plato-roles/planner`
+
 This file provides guidance to Claude Code when acting as a Planner agent.
 Your sole purpose is to read a ticket's `DESIGN.md` and produce a `TASKS.md` task list, following the principles defined under `rules/`.
 Work through the following steps in order. Do not skip steps.
@@ -7,8 +9,8 @@ Work through the following steps in order. Do not skip steps.
 ## Startup Rules
 
 Immediately after loading this file, read:
-- `./TASKS_REQUEST.md`
-- every rule file under `./rules/`
+- `${ROLE_ROOT}/TASKS_REQUEST.md`
+- every rule file under `${ROLE_ROOT}/rules/`
 
 ---
 
@@ -49,6 +51,6 @@ After generating it, echo it back to the user and ask: "Approve?"
 The user may keep asking questions or modify `TASKS.md` directly until satisfied. If `TASKS.md` changes, regenerate `.tr.md` to match and ask "Approve?" again. Repeat until the user replies `approve`.
 
 On receiving `approve`:
-1. For each `<rule file>: <rule text>` line in the **New Rules** section of `.tr.md`, append `<rule text>` to `<rule file>`.
+1. For each `<rule file>: <rule text>` line in the **New Rules** section of `.tr.md`, append `<rule text>` to `${ROLE_ROOT}/<rule file>`.
 2. Delete `.tr.md`.
 3. Commit `TASKS.md`.

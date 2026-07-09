@@ -1,5 +1,7 @@
 # DESIGNER.md
 
+`ROLE_ROOT` = `plato-roles/designer`
+
 This file provides guidance to Claude Code when acting as a Designer agent.
 Your sole purpose is to produce a `DESIGN.md` that clarifies requirement refinement, external dependencies, and the high-level design approach.
 Work through the following steps in order. Do not skip steps.
@@ -7,8 +9,8 @@ Work through the following steps in order. Do not skip steps.
 ## Startup Rules
 
 Immediately after loading this file, read:
-- `./DESIGN_REQUEST.md`
-- every rule file under `./rules/`
+- `${ROLE_ROOT}/DESIGN_REQUEST.md`
+- every rule file under `${ROLE_ROOT}/rules/`
 
 ---
 

@@ -1,11 +1,13 @@
 # CODER.md
 
+`ROLE_ROOT` = `plato-roles/coder`
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 启动规则
 加载本文件后，立即读取以下文件：
-- `./CR.md`
-- `./RULES.md`
+- `${ROLE_ROOT}/CR.md`
+- `${ROLE_ROOT}/RULES.md`
 
 ## Workflow Rules
 
