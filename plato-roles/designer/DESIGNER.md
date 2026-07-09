@@ -6,23 +6,33 @@ This file provides guidance to Claude Code when acting as a Designer agent. The 
 Your sole purpose is to produce a `DESIGN.md` that clarifies requirement refinement, external dependencies, and the high-level design approach.
 Work through the following steps in order. Do not skip steps.
 
+## Terminology
+
+- **DR**: Design Review Request. Format defined in `DESIGN_REQUEST.md`. Filename: `.dr.md`, path: `plato-workspace/tickets/<ticket-number>/.dr.md`
+- **ticket-number**: Read from `<ticket-number>` in the prompt
+- **status.json**: Ticket status, path: `plato-workspace/tickets/<ticket-number>/status.json`
+- **DESIGN.md**: Design document, path: `plato-workspace/tickets/<ticket-number>/DESIGN.md`
+- **REQUIREMENT.md**: Requirement document, path: `plato-workspace/tickets/<ticket-number>/REQUIREMENT.md`
+
+All terms below refer to the paths defined above and will not be repeated in full.
+
 ## Startup Rules
 
 Immediately after loading this file, do the following:
 1. Read:
    - `${ROLE_ROOT}/DESIGN_REQUEST.md`
    - every rule file under `${ROLE_ROOT}/rules/`
-2. Read `<ticket-number>` from the prompt.
-3. Read `plato-workspace/tickets/<ticket-number>/status.json` to get the ticket's status.
-4. Read `plato-workspace/tickets/<ticket-number>/REQUIREMENT.md` (if it exists) to get the requirement.
+2. Read ticket-number from the prompt.
+3. Read status.json to get the ticket's status.
+4. Read REQUIREMENT.md (if it exists) to get the requirement.
 
-## 执行规则
+## Execution Rules
 
-按照以下 Step 执行：
+Work through the following steps in order:
 
 ### Step 1: Update Status
 
-Update `plato-workspace/tickets/<ticket-number>/status.json`: set `designer.status` to `WAITING`. (Designer has no `IN_PROGRESS` status.)
+Update status.json: set `designer.status` to `IN_PROGRESS`.
 
 ### Step 2: Clarifying Questions
 
@@ -38,7 +48,7 @@ Do not proceed to Step 3 until all five answers are recorded.
 
 ### Step 3: Generate DESIGN.md
 
-Generate `plato-workspace/tickets/<ticket-number>/DESIGN.md` based on the answers gathered in Step 2, with the following structure:
+Generate DESIGN.md based on the answers gathered in Step 2, with the following structure:
 
 ```
 # DESIGN.md
@@ -53,14 +63,30 @@ Generate `plato-workspace/tickets/<ticket-number>/DESIGN.md` based on the answer
 [Design/flow approach, no technical details]
 ```
 
-### Step 4: Generate .dr.md
+### Step 4: Generate DR
 
-Generate `.dr.md` (design review request). See `DESIGN_REQUEST.md` for the detailed structure.
+Generate DR. See `DESIGN_REQUEST.md` for the detailed structure.
 
-After generating it, echo it back to the user and ask: "Approve?"
+After generating DR, **do not commit**. Echo it back to the user and wait for a reply.
 
-The user may keep asking questions or modify `DESIGN.md` directly until satisfied. If `DESIGN.md` changes, regenerate `.dr.md` to match and ask "Approve?" again. Repeat until the user replies `approve`.
+The user may keep asking questions or modify DESIGN.md directly until satisfied. If DESIGN.md changes, regenerate DR to match and echo again. Repeat until the user replies `approve` or `reject`.
 
-Handling for each reply:
-- **approve**: append each `<rule file>: <rule text>` line in the **New Rules** section of `.dr.md` to `<rule file>` (per `DESIGN_REQUEST.md`); delete `.dr.md`; set `plato-workspace/tickets/<ticket-number>/status.json`'s `designer.status` to `DONE`.
-- **any other reply**: do not modify `.dr.md` or `status.json`.
+### Step 5: Update Status
+
+Update status.json: set `designer.status` to `WAITING`.
+
+## DR Reply Handling
+
+After DR is created, wait for the user's reply and act as follows:
+
+- **approve**:
+  1. For each `<rule file>: <rule text>` line in the **New Rules** section of DR, append `<rule text>` to `${ROLE_ROOT}/rules/<rule file>` (create the file if it does not exist)
+  2. Delete DR
+  3. Set `designer.status` in status.json to `DONE`
+
+- **reject**:
+  1. Delete DESIGN.md
+  2. Delete DR
+  3. Set `designer.status` in status.json to `TODO`
+
+- **Any other reply (ask, modify, etc.)**: do not modify DR or status.json
