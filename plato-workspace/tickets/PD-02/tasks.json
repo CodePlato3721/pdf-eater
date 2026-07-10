@@ -1,0 +1,40 @@
+{
+    "tasks": [
+        {
+            "id": "TASK-01",
+            "description": "Extend backend state layer (backend/state.py) with the document ingestion pipeline: validate PDF readability, load and split the document, build the FAISS vectorstore, rebuild the QA chain, update loaded_files, and persist index/history so restore() still works",
+            "tech-stack": "state",
+            "business-domain": "upload"
+        },
+        {
+            "id": "TASK-02",
+            "description": "Add POST /api/upload FastAPI endpoint that accepts one or more PDF uploads, invokes the state-layer ingestion pipeline, and returns loaded status and file list; return proper error responses for unreadable PDFs",
+            "tech-stack": "api",
+            "business-domain": "upload"
+        },
+        {
+            "id": "TASK-03",
+            "description": "Add POST /api/ask endpoint: answer a question via the QA chain using current chat history, append the exchange to history (with persistence), record last retrieval query and source snippets as debug info, and return the answer; 4xx when no document is loaded",
+            "tech-stack": "api",
+            "business-domain": "qa"
+        },
+        {
+            "id": "TASK-04",
+            "description": "Add chat history endpoints: GET /api/history to return the chat history and DELETE /api/history to clear it (including persisted history file)",
+            "tech-stack": "api",
+            "business-domain": "history"
+        },
+        {
+            "id": "TASK-05",
+            "description": "Add GET /api/debug endpoint returning the most recent retrieval debug info (query and source snippets recorded by /api/ask)",
+            "tech-stack": "api",
+            "business-domain": "debug"
+        },
+        {
+            "id": "TASK-06",
+            "description": "Disconnect Streamlit: delete app.py and the ui/ package, remove streamlit dependencies from pyproject.toml (run uv sync), and update README/CLAUDE.md run instructions to launch the FastAPI backend instead",
+            "tech-stack": "view",
+            "business-domain": "streamlit-teardown"
+        }
+    ]
+}
