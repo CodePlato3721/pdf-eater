@@ -12,7 +12,7 @@ def _load_plan_tasks(ticket_number: str) -> list:
 def _find_active_coder_task(coder: dict, ticket_number: str, status_path: Path, status: dict) -> dict | None:
     tasks = coder.get("tasks", [])
 
-    active_task = next((t for t in reversed(tasks) if t.get("status") != "DONE"), None)
+    active_task = next((t for t in tasks if t.get("status") != "DONE"), None)
     if active_task is not None:
         return active_task
 
