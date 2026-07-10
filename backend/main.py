@@ -1,14 +1,18 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
+from services import ingestion, qa
+from services.ingestion import PDFNotReadableError
+from services.qa import NoDocumentLoadedError
 from services.state import state
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    state.restore()
+    ingestion.restore()
     yield
 
 
@@ -26,3 +30,30 @@ app.add_middleware(
 @app.get("/api/status")
 def get_status():
     return {"loaded": state.chain is not None, "files": state.loaded_files}
+
+
+@app.post("/api/upload")
+async def upload(files: list[UploadFile] = File(...)):
+    payload = [(file.filename, await file.read()) for file in files]
+    try:
+        ingestion.ingest(payload)
+    except PDFNotReadableError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)
+        ) from exc
+    return {"loaded": True, "files": state.loaded_files}
+
+
+class AskRequest(BaseModel):
+    question: str
+
+
+@app.post("/api/ask")
+def ask(request: AskRequest):
+    try:
+        answer = qa.ask(request.question)
+    except NoDocumentLoadedError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=str(exc)
+        ) from exc
+    return {"answer": answer}
