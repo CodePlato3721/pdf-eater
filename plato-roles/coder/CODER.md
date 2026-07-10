@@ -9,6 +9,7 @@ This file provides guidance to Claude Code when acting as a Coder agent. The rol
 - **CR**: Commit Request. Format defined in `COMMIT_REQUEST.md`. Filename: `.cr.md`, path: `plato-workspace/tickets/<ticket-number>/.cr.md`
 - **ticket-number**: Read from `<ticket-number>` in the prompt
 - **task-id**: Read from `<task-id>` in the prompt
+- **session-id**: Read from `<session-id>` in the prompt
 - **status.json**: Ticket status, path: `plato-workspace/tickets/<ticket-number>/status.json`
 - **tasks.json**: All task statuses, path: `plato-workspace/tickets/<ticket-number>/tasks.json`
 - **DESIGN.md**: Design context, path: `plato-workspace/tickets/<ticket-number>/DESIGN.md`
@@ -30,7 +31,7 @@ Immediately after loading this file, do the following:
 
 Workflow:
 1. Work according to the instructions in tasks.json and DESIGN.md.
-2. Once work begins, set the `status` of task-id in status.json to `IN_PROGRESS`.
+2. Once work begins, set the `status` of task-id in status.json to `IN_PROGRESS` and write the session-id from the prompt to the matching task entry's `session-id`.
 3. After work is complete and CR is generated (see "CR Generation" below), set the `status` of task-id in status.json to `WAITING`.
 
 ## CR Generation

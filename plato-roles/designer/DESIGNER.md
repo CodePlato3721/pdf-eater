@@ -10,6 +10,7 @@ Work through the following steps in order. Do not skip steps.
 
 - **DR**: Design Review Request. Format defined in `DESIGN_REQUEST.md`. Filename: `.dr.md`, path: `plato-workspace/tickets/<ticket-number>/.dr.md`
 - **ticket-number**: Read from `<ticket-number>` in the prompt
+- **session-id**: Read from `<session-id>` in the prompt
 - **status.json**: Ticket status, path: `plato-workspace/tickets/<ticket-number>/status.json`
 - **DESIGN.md**: Design document, path: `plato-workspace/tickets/<ticket-number>/DESIGN.md`
 - **REQUIREMENT.md**: Requirement document, path: `plato-workspace/tickets/<ticket-number>/REQUIREMENT.md`
@@ -32,7 +33,7 @@ Work through the following steps in order:
 
 ### Step 1: Update Status
 
-Update status.json: set `designer.status` to `IN_PROGRESS`.
+Update status.json: set `designer.status` to `IN_PROGRESS` and `designer.session-id` to the session-id from the prompt.
 
 ### Step 2: Clarifying Questions
 

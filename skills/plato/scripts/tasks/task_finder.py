@@ -1,0 +1,67 @@
+import json
+from pathlib import Path
+
+
+def _load_plan_tasks(ticket_number: str) -> list:
+    tasks_path = Path("plato-workspace/tickets") / ticket_number / "tasks.json"
+    if not tasks_path.exists():
+        return []
+    return json.loads(tasks_path.read_text(encoding="utf-8")).get("tasks", [])
+
+
+def _find_active_coder_task(coder: dict, ticket_number: str, status_path: Path, status: dict) -> dict | None:
+    tasks = coder.get("tasks", [])
+
+    active_task = next((t for t in reversed(tasks) if t.get("status") != "DONE"), None)
+    if active_task is not None:
+        return active_task
+
+    known_ids = {t.get("id") for t in tasks}
+    next_plan_task = next((pt for pt in _load_plan_tasks(ticket_number) if pt.get("id") not in known_ids), None)
+    if next_plan_task is None:
+        return None
+
+    new_task = {"id": next_plan_task["id"], "status": "TODO", "coder": {"session-id": ""}}
+    tasks.append(new_task)
+    coder["tasks"] = tasks
+    status["coder"] = coder
+    status_path.write_text(json.dumps(status, indent=4), encoding="utf-8")
+    return new_task
+
+
+class ActiveStepFinder:
+    def __init__(self, ticket_number: str):
+        self.ticket_number = ticket_number
+        self._status_path = Path("plato-workspace/tickets") / ticket_number / "status.json"
+
+    def exists(self) -> bool:
+        return self._status_path.exists()
+
+    def find(self) -> dict:
+        status = json.loads(self._status_path.read_text(encoding="utf-8"))
+
+        designer = status.get("designer", {})
+        if designer.get("status") != "DONE":
+            return self._result("designer", designer.get("status", "TODO"), designer.get("session-id", ""))
+
+        planner = status.get("planner", {})
+        if planner.get("status") != "DONE":
+            return self._result("planner", planner.get("status", "TODO"), planner.get("session-id", ""))
+
+        coder = status.get("coder", {})
+        if coder.get("status") != "DONE":
+            active_task = _find_active_coder_task(coder, self.ticket_number, self._status_path, status)
+            if active_task is not None:
+                return self._result(
+                    "coder",
+                    active_task.get("status", "TODO"),
+                    active_task.get("coder", {}).get("session-id", ""),
+                    task_id=active_task.get("id", ""),
+                )
+            return self._result("coder", coder.get("status", "TODO"), "")
+
+        return self._result("none", "DONE", "")
+
+    @staticmethod
+    def _result(role: str, status: str, session_id: str, task_id: str = "") -> dict:
+        return {"role": role, "status": status, "session_id": session_id, "task_id": task_id}

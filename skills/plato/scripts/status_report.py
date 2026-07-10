@@ -1,6 +1,23 @@
-import json
 import sys
-from pathlib import Path
+
+from status.ticket_status import TicketStatus
+
+
+def format_report(data: dict) -> str:
+    lines = [
+        f"ticket number: {data['ticket_number']}",
+        f"title: {data['title']}",
+        f"designer: {data['designer']}",
+        f"planner: {data['planner']}",
+        f"coder: {data['coder']}",
+        "tasks:",
+    ]
+    if data["tasks"]:
+        for task in data["tasks"]:
+            lines.append(f"{task['id']}: {task['status']}")
+    else:
+        lines.append("(none yet)")
+    return "\n".join(lines)
 
 
 def main() -> None:
@@ -8,32 +25,12 @@ def main() -> None:
         print("usage: status_report.py <ticket-number>", file=sys.stderr)
         sys.exit(1)
 
-    ticket_number = sys.argv[1]
-    status_path = Path("plato-workspace/tickets") / ticket_number / "status.json"
-
-    if not status_path.exists():
-        print(f"status.json not found for ticket {ticket_number}", file=sys.stderr)
+    ticket = TicketStatus(sys.argv[1])
+    if not ticket.exists():
+        print(f"status.json not found for ticket {sys.argv[1]}", file=sys.stderr)
         sys.exit(1)
 
-    status = json.loads(status_path.read_text(encoding="utf-8"))
-
-    lines = [
-        f"ticket number: {ticket_number}",
-        f"title: {status.get('title', '')}",
-        f"designer: {status.get('designer', {}).get('status', '')}",
-        f"planner: {status.get('planner', {}).get('status', '')}",
-        f"coder: {status.get('coder', {}).get('status', '')}",
-        "tasks:",
-    ]
-
-    tasks = status.get("coder", {}).get("tasks", [])
-    if tasks:
-        for task in tasks:
-            lines.append(f"{task.get('id', '')}: {task.get('status', '')}")
-    else:
-        lines.append("(none yet)")
-
-    print("\n".join(lines))
+    print(format_report(ticket.read()))
 
 
 if __name__ == "__main__":
