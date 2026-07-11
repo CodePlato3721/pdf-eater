@@ -33,9 +33,10 @@ That's exactly what PDF Eater does. 🍽️
 
 ## 🛠️ Tech Stack
 
+- [FastAPI](https://fastapi.tiangolo.com/) — Backend API
 - [LangChain](https://www.langchain.com/) — LLM orchestration
 - [OpenAI](https://openai.com/) — Embeddings + GPT-3.5
-- [Streamlit](https://streamlit.io/) — Web UI
+- [FAISS](https://github.com/facebookresearch/faiss) — Vector store
 - [PDFMiner](https://pdfminersix.readthedocs.io/) — PDF text extraction
 
 ---
@@ -49,32 +50,30 @@ git clone https://github.com/CodePlato3721/pdf-eater.git
 cd pdf-eater
 ```
 
-### 2. Create a virtual environment
+### 2. Install dependencies
+
+Requires [uv](https://docs.astral.sh/uv/).
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+cd backend
+uv sync
 ```
 
-### 3. Install dependencies
+### 3. Set up your API key
 
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Set up your API key
-
-Create a `.env` file in the root directory:
+Create a `.env` file in the `backend/` directory:
 
 ```
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-### 5. Run the app
+### 4. Run the backend
 
 ```bash
-streamlit run app.py
+uv run uvicorn main:app --reload
 ```
+
+The API is served at `http://127.0.0.1:8000` (interactive docs at `/docs`).
 
 ---
 
@@ -82,18 +81,20 @@ streamlit run app.py
 
 ```
 pdf-eater/
-├── core/
-│   ├── chain.py        # Conversational retrieval chain
-│   ├── embeddings.py   # Vectorstore creation
-│   └── loader.py       # PDF loading, splitting and validation
-├── ui/
-│   ├── chat.py         # Chat interface component
-│   └── sidebar.py      # Sidebar component with file upload
-├── .gitignore
-├── app.py              # Entry point
-├── config.py           # Configuration constants
-├── README.md
-└── requirements.txt
+├── backend/
+│   ├── main.py         # FastAPI entry point (API endpoints)
+│   ├── config.py       # Configuration constants
+│   ├── core/
+│   │   ├── chain.py        # Conversational retrieval chain
+│   │   ├── embeddings.py   # Vectorstore creation
+│   │   └── loader.py       # PDF loading, splitting and validation
+│   ├── services/
+│   │   ├── state.py        # App state container and persistence
+│   │   ├── ingestion.py    # PDF ingestion pipeline
+│   │   └── qa.py           # Question answering service
+│   └── tests/
+├── doc/
+└── README.md
 ```
 
 ---
