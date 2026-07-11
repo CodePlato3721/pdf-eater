@@ -68,3 +68,8 @@ def ask(request: AskRequest):
             status_code=status.HTTP_409_CONFLICT, detail=str(exc)
         ) from exc
     return {"answer": answer}
+
+
+@app.get("/api/debug")
+def get_debug():
+    return {"query": state.last_query, "sources": state.last_sources}
