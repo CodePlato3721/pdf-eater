@@ -26,6 +26,11 @@ class AppState:
         with open(HISTORY_PATH, "w", encoding="utf-8") as f:
             json.dump(self.chat_history, f, ensure_ascii=False)
 
+    def clear_history(self) -> None:
+        """Reset chat_history and persist it, clearing the history file too."""
+        self.chat_history = []
+        self.save_history()
+
     def load_history(self) -> None:
         """Reload chat_history from HISTORY_PATH; falls back to [] on errors."""
         if os.path.isfile(HISTORY_PATH):

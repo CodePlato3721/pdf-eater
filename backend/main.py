@@ -44,6 +44,17 @@ async def upload(files: list[UploadFile] = File(...)):
     return {"loaded": True, "files": state.loaded_files}
 
 
+@app.get("/api/history")
+def get_history():
+    return {"history": state.chat_history}
+
+
+@app.delete("/api/history")
+def clear_history():
+    state.clear_history()
+    return {"history": []}
+
+
 class AskRequest(BaseModel):
     question: str
 

@@ -4,6 +4,7 @@
 - **前端单元测试采用 Chicago 派风格**：mock 只用于让被测代码能运行（隔离外部依赖、控制返回值），不断言 mock 被调用了多少次或以什么参数调用。只断言可观察的状态结果。
 - **backend 根目录只放入口文件**（main.py 及 FastAPI endpoint 注册）；会话状态、业务编排等服务层代码放 `backend/services/`，领域能力放 `backend/core/`。
 - **backend 的 `AppState`（services/state.py）只做状态容器与自身持久化**；业务编排（上传管线、问答等）放 `services/` 下独立 service 模块，endpoint 只做 HTTP 映射与异常转换。
+- **backend 的 main.py endpoint（纯 HTTP 映射与异常转换）不编写单元测试**；行为验证放在 services/core/state 层的单元测试中直接测函数，不经过 HTTP。
 
 ## NEVER
 

@@ -27,6 +27,23 @@ class TestSaveHistory:
         assert json.loads(history_file.read_text(encoding="utf-8")) == [["hello", "hi"]]
 
 
+class TestClearHistory:
+    """Tests for AppState.clear_history()"""
+
+    def test_clear_history_empties_memory_and_persisted_file(self, tmp_path):
+        """clear_history() resets chat_history and clears the persisted file."""
+        history_file = tmp_path / "history.json"
+        history_file.write_text(json.dumps([["hello", "hi"]]), encoding="utf-8")
+
+        with patch.object(state_module, "HISTORY_PATH", str(history_file)):
+            st = AppState()
+            st.chat_history = [["hello", "hi"]]
+            st.clear_history()
+
+        assert st.chat_history == []
+        assert json.loads(history_file.read_text(encoding="utf-8")) == []
+
+
 class TestLoadHistory:
     """Tests for AppState.load_history()"""
 
