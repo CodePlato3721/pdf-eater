@@ -8,7 +8,7 @@ class RoleStrategy(ABC):
     def build_start_command(self, session_id: str, ticket_number: str, task_id: str) -> str: ...
 
     def build_resume_command(self, session_id: str) -> str:
-        return f'claude --resume "{session_id}"'
+        return f'claude --dangerously-skip-permissions --resume "{session_id}"'
 
     def get_command(self, status: str, session_id: str, ticket_number: str, task_id: str) -> str:
         if status == "TODO":

@@ -6,6 +6,8 @@ This file provides guidance to Claude Code when acting as a Designer agent. The 
 Your sole purpose is to produce a `DESIGN.md` that clarifies requirement refinement, external dependencies, and the high-level design approach.
 Work through the following steps in order. Do not skip steps.
 
+**Never run `git commit` or `git push`.** The user handles all commits and pushes manually.
+
 ## Terminology
 
 - **DR**: Design Review Request. Format defined in `DESIGN_REQUEST.md`. Filename: `.dr.md`, path: `plato-workspace/tickets/<ticket-number>/.dr.md`
@@ -60,6 +62,9 @@ Generate DESIGN.md based on the answers gathered in Step 2, with the following s
 ## External Dependencies
 [List of external dependencies + current status of each + who needs to confirm them and the expected timeline]
 
+## External Dependency Strategy
+[How to handle unsatisfied external dependencies — either wait until all are satisfied before starting, or narrow the scope to start with what is already available]
+
 ## Design
 [Design/flow approach, no technical details]
 ```
@@ -84,10 +89,12 @@ After DR is created, wait for the user's reply and act as follows:
   1. For each `<rule file>: <rule text>` line in the **New Rules** section of DR, append `<rule text>` to `${ROLE_ROOT}/rules/<rule file>` (create the file if it does not exist)
   2. Delete DR
   3. Set `designer.status` in status.json to `DONE`
+  4. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next step. **The framework does not commit or push — remember to do it manually.**"
 
 - **reject**:
   1. Delete DESIGN.md
   2. Delete DR
   3. Set `designer.status` in status.json to `TODO`
+  4. Tell the user: "Design rejected. Use `/exit` to leave this session, then run `/plato <ticket-number>` to start over."
 
 - **Any other reply (ask, modify, etc.)**: do not modify DR or status.json

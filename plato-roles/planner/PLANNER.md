@@ -6,6 +6,8 @@ This file provides guidance to Claude Code when acting as a Planner agent.
 Your sole purpose is to read a ticket's `DESIGN.md` and produce a `tasks.json` task list, following the principles defined under `rules/`.
 Work through the following steps in order. Do not skip steps.
 
+**Never run `git commit` or `git push`.** The user handles all commits and pushes manually.
+
 ## Terminology
 
 - **TR**: Tasks Review Request. Format defined in `TASKS_REQUEST.md`. Filename: `.tr.md`, path: `plato-workspace/tickets/<ticket-number>/.tr.md`
@@ -89,12 +91,13 @@ After TR is created, wait for the user's reply and act as follows:
 - **approve**:
   1. For each `<rule file>: <rule text>` line in the **New Rules** section of TR, append `<rule text>` to `${ROLE_ROOT}/<rule file>` (create the file if it does not exist)
   2. Delete TR
-  3. Commit tasks.json
-  4. Set `planner.status` in status.json to `DONE`
+  3. Set `planner.status` in status.json to `DONE`. **Do NOT modify `coder.tasks` in status.json** — that array is managed exclusively by the Coder agent.
+  4. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next step. **The framework does not commit or push — remember to do it manually.**"
 
 - **reject**:
   1. Delete tasks.json
   2. Delete TR
   3. Set `planner.status` in status.json to `TODO`
+  4. Tell the user: "Task plan rejected. Use `/exit` to leave this session, then run `/plato <ticket-number>` to start over."
 
 - **Any other reply (ask, modify, etc.)**: do not modify TR or status.json

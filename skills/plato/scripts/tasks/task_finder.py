@@ -9,7 +9,7 @@ def _load_plan_tasks(ticket_number: str) -> list:
     return json.loads(tasks_path.read_text(encoding="utf-8")).get("tasks", [])
 
 
-def _find_active_coder_task(coder: dict, ticket_number: str, status_path: Path, status: dict) -> dict | None:
+def _find_active_coder_task(coder: dict, ticket_number: str) -> dict | None:
     tasks = coder.get("tasks", [])
 
     active_task = next((t for t in tasks if t.get("status") != "DONE"), None)
@@ -17,16 +17,7 @@ def _find_active_coder_task(coder: dict, ticket_number: str, status_path: Path, 
         return active_task
 
     known_ids = {t.get("id") for t in tasks}
-    next_plan_task = next((pt for pt in _load_plan_tasks(ticket_number) if pt.get("id") not in known_ids), None)
-    if next_plan_task is None:
-        return None
-
-    new_task = {"id": next_plan_task["id"], "status": "TODO", "coder": {"session-id": ""}}
-    tasks.append(new_task)
-    coder["tasks"] = tasks
-    status["coder"] = coder
-    status_path.write_text(json.dumps(status, indent=4), encoding="utf-8")
-    return new_task
+    return next((pt for pt in _load_plan_tasks(ticket_number) if pt.get("id") not in known_ids), None)
 
 
 class ActiveStepFinder:
@@ -50,7 +41,7 @@ class ActiveStepFinder:
 
         coder = status.get("coder", {})
         if coder.get("status") != "DONE":
-            active_task = _find_active_coder_task(coder, self.ticket_number, self._status_path, status)
+            active_task = _find_active_coder_task(coder, self.ticket_number)
             if active_task is not None:
                 return self._result(
                     "coder",

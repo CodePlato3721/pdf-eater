@@ -1,23 +1,22 @@
-## 单次改动规范(CR规范)
+## Change Granularity Rules (CR Rules)
 
-### 颗粒度
+### Granularity
 
-每一次改动保持小颗粒度。颗粒度判断标准：
+Keep each change small-grained. Criteria for granularity:
 
-- **同层改动**：单次改动尽量只改同一层。改 service 就不改 router/view；改业务逻辑 py 就不改 REST API 层。
-- **一句话概括检验**：本次改动的 CR 中，Design（feature）或 Solution（defect）必须能用一句简短的话概括完。如果需要列多件事才能描述清楚，说明颗粒度太大，应拆分。
-- **颗粒度不应过小**：如果本次改动本身就只涉及配置（例如某个 defect 就是配置错误，则配置单独成一个 CR 是合理的。但如果配置改动是为了支撑业务逻辑改动（例如为新功能新增依赖），则依赖变更与源码改动应合并在同一个 CR 里，不应拆开。
-- **改动必须闭合**：每次改动都必须有验证手段，保证不会提交错误代码后再修改。验证方式按优先级：
-  1. 项目已有对应层的**单元测试** → 随改动一起更新，CR 的 Test Details 写测试摘要。
-  2. 项目已有**端到端测试** → 随改动一起更新，CR 的 Test Details 写测试摘要。
-  3. 无自动化测试 → 在 CR 的 Test Details 里写清楚**手动验证步骤**，告诉用户执行哪条命令或操作来验证本次改动正确。
-  4. 连手动验证都难以做到（例如改动依赖外部环境尚未就绪）→ 在本次改动中附上**临时测试脚手架代码**，CR 注明"下次改动删除脚手架"，下一个 CR 中去除。
+- **One-sentence summary check**: The Design (feature) or Solution (defect) in a CR must be summarizable in one short sentence. If it takes a list of items to describe, the change is too large and should be split.
+- **Not too small either**: If the change itself is purely configuration (e.g. a defect that is just a misconfiguration), configuration alone as a CR is fine. But if the configuration change exists to support a business logic change (e.g. adding a dependency for a new feature), the dependency change and source change must be merged into the same CR — do not split them.
+- **Changes must be closed**: Every change must include a way to verify it, ensuring no broken code is submitted and then patched later. Verification priority:
+  1. The project already has **unit tests** for the affected layer → update them alongside the change; write a test summary in the CR's Test Details.
+  2. The project already has **end-to-end tests** → update them alongside the change; write a test summary in the CR's Test Details.
+  3. No automated tests → describe **manual verification steps** clearly in the CR's Test Details — tell the user which command to run or what action to take to confirm the change is correct.
+  4. Even manual verification is hard (e.g. the change depends on an external environment that isn't ready yet) → include **temporary scaffolding code** in this change; note "remove scaffolding in next change" in the CR; remove it in the next CR.
 
-### CR 的格式
+### CR Format
 
-CR 分为 feature 和 defect 两种。
+CRs come in two types: feature and defect.
 
-**Source Tree** 和 **Test Tree** 必须使用 ASCII 文件树格式，不可以用一句话代替，例如：
+**Source Tree** and **Test Tree** must use ASCII file-tree format — a single sentence is not acceptable, for example:
 ```
 project/
 ├── src/
@@ -27,41 +26,42 @@ project/
 ```
 
 **feature**
-- **Design**：本次改动的设计摘要
-- **Source Details**：源码核心细节，1~2 行代码，简短，不含测试改动
-- **Source Tree**：本次改动的源码文件树（ASCII 树）
-- **Test Details**：测试改动摘要。细节见 **CR 的测试方式**
-- **Test Tree**：本次改动的测试文件树（ASCII 树）；细节见 **CR 的测试方式**
-- **Test Result**：测试的结果。细节见 **CR 的测试方式**
-- **New Rules**（可选）：格式 `<rule file>: <rule text>`，一行一条。approve 后追加到 `${ROLE_ROOT}/rules/<rule file>`。无新规则时留空
+- **Design**: Summary of this change's design
+- **Source Details**: Core source-code detail, 1–2 lines of code, brief, excluding test changes
+- **Source Tree**: ASCII tree of source files changed in this change
+- **Test Details**: Summary of test changes. See **CR Testing Methods** below
+- **Test Tree**: ASCII tree of test files changed in this change; see **CR Testing Methods** below
+- **Test Result**: Test outcome. See **CR Testing Methods** below
+- **New Rules** (optional): Format `<rule file>: <rule text>`, one rule per line. Appended to `${ROLE_ROOT}/rules/<rule file>` on approve. Leave empty if there are no new rules.
 
 **defect**
-- **Root Cause**：defect 的根本原因
-- **Solution**：修改方案摘要
-- **Source Details**：源码核心细节，1~2 行代码，简短，不含测试改动
-- **Source Tree**：本次改动的源码文件树（ASCII 树）
-- **Test Details**：测试改动摘要。细节见 **CR 的测试方式**
-- **Test Tree**：本次改动的测试文件树（ASCII 树）；细节见 **CR 的测试方式**
-- **Test Result**：测试的结果。细节见 **CR 的测试方式**
-- **New Rules**（可选）：格式 `<rule file>: <rule text>`，一行一条。approve 后追加到 `${ROLE_ROOT}/rules/<rule file>`。无新规则时留空
+- **Root Cause**: Root cause of the defect
+- **Solution**: Summary of the fix
+- **Source Details**: Core source-code detail, 1–2 lines of code, brief, excluding test changes
+- **Source Tree**: ASCII tree of source files changed in this change
+- **Test Details**: Summary of test changes. See **CR Testing Methods** below
+- **Test Tree**: ASCII tree of test files changed in this change; see **CR Testing Methods** below
+- **Test Result**: Test outcome. See **CR Testing Methods** below
+- **New Rules** (optional): Format `<rule file>: <rule text>`, one rule per line. Appended to `${ROLE_ROOT}/rules/<rule file>` on approve. Leave empty if there are no new rules.
 
-### CR 的测试方式
-CR 中可选的测试方式有单元测试、端到端测试、人工测试。他们有不同的处理方式。
+### CR Testing Methods
 
-**单元测试**
-模型在 `plato-workspace/tickets/<ticket-number>/status.json` 的 `unit-test-path` 指定的目录下新增、更改单元测试，执行单元测试，将执行结果摘要写入 Test Result（通过/失败条数、失败原因）
-- **Test Details**：写出本次单元测试的测试目的、方式的摘要
-- **Test Tree**：本次改动的测试文件树（ASCII 树）
-- **Test Result**：单元测试的结果
+Available testing methods in a CR: unit tests, end-to-end tests, and manual testing. Each is handled differently.
 
-**端到端测试**
-模型在 `plato-workspace/tickets/<ticket-number>/status.json` 的 `e2e-test-path` 指定的目录下新增、更改端到端测试，执行端到端测试，将执行结果摘要写入 Test Result
-- **Test Details**：写出本次端到端测试的测试目的、方式的摘要
-- **Test Tree**：本次改动的测试文件树（ASCII 树）
-- **Test Result**：端到端测试的结果
+**Unit tests**
+The agent adds or updates unit tests in the directory specified by `unit-test-path` in `plato-workspace/tickets/<ticket-number>/status.json`, runs the tests, and writes a result summary to Test Result (pass/fail counts, failure reasons).
+- **Test Details**: Summary of the test purpose and approach for this change
+- **Test Tree**: ASCII tree of test files changed in this change
+- **Test Result**: Unit test results
 
-**人工测试**
-无法用自动化测试覆盖时，写清楚如何手动测试本次改动：需要执行的命令，或需要启动什么服务、打开浏览器访问什么地址、看到什么结果才算成功
-- **Test Details**：手动测试的步骤说明（命令，或启动服务 + 访问地址 + 成功标准）
-- **Test Tree**： `无变更`
-- **Test Result**：`待人工验证，见 Test Details`
+**End-to-end tests**
+The agent adds or updates end-to-end tests in the directory specified by `e2e-test-path` in `plato-workspace/tickets/<ticket-number>/status.json`, runs the tests, and writes a result summary to Test Result.
+- **Test Details**: Summary of the test purpose and approach for this change
+- **Test Tree**: ASCII tree of test files changed in this change
+- **Test Result**: End-to-end test results
+
+**Manual testing**
+When automated tests cannot cover the change, describe clearly how to test it manually: which commands to run, or which service to start, what URL to open in the browser, and what result indicates success.
+- **Test Details**: Manual testing steps (commands, or service to start + URL to open + success criteria)
+- **Test Tree**: `No changes`
+- **Test Result**: `Pending manual verification — see Test Details`
