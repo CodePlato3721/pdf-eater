@@ -4,6 +4,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from config import FRONTEND_DEV_ORIGINS
 from services import ingestion, qa
 from services.ingestion import PDFNotReadableError
 from services.qa import NoDocumentLoadedError
@@ -20,8 +21,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=FRONTEND_DEV_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

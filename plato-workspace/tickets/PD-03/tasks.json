@@ -1,0 +1,40 @@
+{
+    "tasks": [
+        {
+            "id": "TASK-01",
+            "description": "Backend adjustments for the React frontend: add CORS middleware for the Vite dev server, and verify /api/status returns the uploaded-PDF list in a shape the frontend can consume (adjust only if needed)",
+            "tech-stack": "backend",
+            "business-domain": "documents"
+        },
+        {
+            "id": "TASK-02",
+            "description": "Scaffold the frontend/ project: React 18 + Vite, base two-pane layout shell (left sidebar + right chat area), unit test setup under frontend/tests/unit and e2e test setup under frontend/tests/e2e",
+            "tech-stack": "scaffold",
+            "business-domain": "documents"
+        },
+        {
+            "id": "TASK-03",
+            "description": "Documents API client: plain-fetch wrappers for POST /api/upload (multipart PDF upload) and GET /api/status (uploaded-PDF list), with error handling, plus unit tests",
+            "tech-stack": "api-client",
+            "business-domain": "documents"
+        },
+        {
+            "id": "TASK-04",
+            "description": "Documents view: left sidebar renders the uploaded-PDF list from /api/status; chat input area has a PDF attachment button that uploads via /api/upload and refreshes the sidebar; handle upload-in-progress and upload-failure states, plus unit tests",
+            "tech-stack": "view",
+            "business-domain": "documents"
+        },
+        {
+            "id": "TASK-05",
+            "description": "Chat Q&A (full slice): api-client for POST /api/ask, GET/DELETE /api/history; chat window renders conversation history, question input sends /api/ask and displays the answer, thinking-in-progress state, ask-failure message, no-document-loaded state, clear-history action; plus unit tests",
+            "tech-stack": "api-client + view",
+            "business-domain": "chat"
+        },
+        {
+            "id": "TASK-06",
+            "description": "E2E tests in frontend/tests/e2e covering the main flow: attach and upload a PDF from the chat input, sidebar shows the file, ask a question, answer appears in the chat window, clear history resets the conversation",
+            "tech-stack": "e2e-test",
+            "business-domain": "chat"
+        }
+    ]
+}

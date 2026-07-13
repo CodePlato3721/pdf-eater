@@ -1,0 +1,61 @@
+{
+    "type": "feature",
+    "title": "pdf-eater react前端",
+    "unit-test-path": "frontend/tests/unit",
+    "e2e-test-path": "frontend/tests/e2e",
+    "designer": {
+        "session-id": "67871558-34fb-4c29-b1dc-88eeffd43c15",
+        "status": "DONE"
+    },
+    "planner": {
+        "session-id": "959df66c-651b-4958-9926-d9b789c8f167",
+        "status": "DONE"
+    },
+    "coder": {
+        "status": "TODO",
+        "tasks": [
+            {
+                "id": "TASK-01",
+                "coder": {
+                    "session-id": "e09afbfd-67c6-4e27-a2b8-35e561c90290"
+                },
+                "status": "DONE"
+            },
+            {
+                "id": "TASK-02",
+                "coder": {
+                    "session-id": ""
+                },
+                "status": "TODO"
+            },
+            {
+                "id": "TASK-03",
+                "coder": {
+                    "session-id": ""
+                },
+                "status": "TODO"
+            },
+            {
+                "id": "TASK-04",
+                "coder": {
+                    "session-id": ""
+                },
+                "status": "TODO"
+            },
+            {
+                "id": "TASK-05",
+                "coder": {
+                    "session-id": ""
+                },
+                "status": "TODO"
+            },
+            {
+                "id": "TASK-06",
+                "coder": {
+                    "session-id": ""
+                },
+                "status": "TODO"
+            }
+        ]
+    }
+}
