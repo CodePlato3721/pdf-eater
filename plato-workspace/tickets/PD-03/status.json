@@ -31,16 +31,16 @@
             {
                 "id": "TASK-03",
                 "coder": {
-                    "session-id": ""
+                    "session-id": "5949d233-4738-475d-8620-f21c682cd6fe"
                 },
-                "status": "TODO"
+                "status": "DONE"
             },
             {
                 "id": "TASK-04",
                 "coder": {
-                    "session-id": ""
+                    "session-id": "1b562581-2e44-4f80-9c56-886f31e0eaef"
                 },
-                "status": "TODO"
+                "status": "DONE"
             },
             {
                 "id": "TASK-05",
