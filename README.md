@@ -33,6 +33,7 @@ That's exactly what PDF Eater does. 🍽️
 
 ## 🛠️ Tech Stack
 
+- [React 18](https://react.dev/) + [Vite](https://vite.dev/) — Frontend
 - [FastAPI](https://fastapi.tiangolo.com/) — Backend API
 - [LangChain](https://www.langchain.com/) — LLM orchestration
 - [OpenAI](https://openai.com/) — Embeddings + GPT-3.5
@@ -75,6 +76,16 @@ uv run uvicorn main:app --reload
 
 The API is served at `http://127.0.0.1:8000` (interactive docs at `/docs`).
 
+### 5. Run the frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The app is served at `http://localhost:5173`.
+
 ---
 
 ## 📁 Project Structure
@@ -93,6 +104,15 @@ pdf-eater/
 │   │   ├── ingestion.py    # PDF ingestion pipeline
 │   │   └── qa.py           # Question answering service
 │   └── tests/
+├── frontend/
+│   ├── index.html      # Vite entry HTML
+│   ├── src/
+│   │   ├── main.tsx        # React entry point
+│   │   ├── App.tsx         # Two-pane layout (sidebar + chat)
+│   │   └── components/     # UI components
+│   └── tests/
+│       ├── unit/           # Vitest unit tests
+│       └── e2e/            # Playwright e2e tests
 ├── doc/
 └── README.md
 ```

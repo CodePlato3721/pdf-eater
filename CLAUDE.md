@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-PDF Eater is a PDF Q&A application, currently migrating to a **React frontend + FastAPI backend**. The backend API lives in `backend/`; the former Streamlit UI has been removed. The React frontend does not exist yet.
+PDF Eater is a PDF Q&A application with a **React frontend + FastAPI backend**. The backend API lives in `backend/`; the React 18 + Vite frontend lives in `frontend/`.
 
 ## Running the Current App
 
@@ -21,11 +21,30 @@ uv sync
 uv run uvicorn main:app --reload
 ```
 
+```bash
+cd frontend
+
+# Install dependencies (first time or after package.json changes)
+npm install
+
+# Run the Vite dev server (http://localhost:5173)
+npm run dev
+```
+
 ## Running Backend Tests
 
 ```bash
 cd backend
 uv run pytest tests/unit
+```
+
+## Running Frontend Tests
+
+```bash
+cd frontend
+npm test                          # unit tests (Vitest)
+npx playwright install chromium   # one-time browser download for e2e
+npm run test:e2e                  # e2e tests (Playwright)
 ```
 
 ## Architecture
