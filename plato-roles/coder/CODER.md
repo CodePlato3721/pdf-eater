@@ -45,7 +45,7 @@ After work is complete, **do not commit or push** — generate **.cr.md** instea
 
 ### Step 4: Echo
 
-Run `python plato-roles/scripts/echo_cli.py cr <ticket-number>` to echo it to the user.
+Run `python plato-roles/scripts/echo_cli.py cr <ticket-number>` to echo it to the user. Because tool output is collapsed in the terminal, reproduce the command's output **verbatim** in your reply — the CR itself is the report. Do not summarize, reword, or wrap it in your own format
 
 ## CR Reply Handling
 
