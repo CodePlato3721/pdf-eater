@@ -1,5 +1,7 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -9,6 +11,11 @@ from services import ingestion, qa
 from services.ingestion import PDFNotReadableError
 from services.qa import NoDocumentLoadedError
 from services.state import state
+
+# backend/.env takes priority over pre-existing environment variables (e.g. a
+# stale user-level OPENAI_API_KEY), hence override=True. Safe below the imports:
+# the key is only read when the OpenAI client is created, at upload/ask time.
+load_dotenv(Path(__file__).resolve().parent / ".env", override=True)
 
 
 @asynccontextmanager
