@@ -5,6 +5,7 @@
 - **The backend root directory contains only entry-point files** (main.py and FastAPI endpoint registrations); session state, business orchestration, and other service-layer code go in `backend/services/`; domain capabilities go in `backend/core/`.
 - **The backend `AppState` (`services/state.py`) is a pure state container and self-persistence handler**; business orchestration (upload pipeline, Q&A, etc.) goes in independent service modules under `services/`; endpoints handle only HTTP mapping and exception translation.
 - **Do not write unit tests for backend main.py endpoints (pure HTTP mapping and exception translation)**; verify behavior through unit tests on the services/core/state layer by calling functions directly, not through HTTP.
+- **Frontend e2e tests stub the backend with Playwright `page.route`** (no real backend or OpenAI key required); because the dev server and API are cross-origin, fulfilled responses must include CORS headers and OPTIONS preflights must be answered explicitly.
 
 ## NEVER
 
