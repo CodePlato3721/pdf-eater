@@ -2,7 +2,7 @@ from .base import RoleStrategy
 
 
 class CoderStrategy(RoleStrategy):
-    role_file = "plato-roles/coder/CODER.md"
+    role_file = ".plato/coder/CODER.md"
 
     def build_start_command(self, session_id: str, ticket_number: str, task_id: str) -> str:
         prompt = f"ticket-number={ticket_number}, task-id={task_id}, session-id={session_id}"

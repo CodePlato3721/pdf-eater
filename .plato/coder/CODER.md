@@ -1,15 +1,13 @@
 # CODER.md
 
-`ROLE_ROOT` = `plato-roles/coder`
-
 This file provides guidance to Claude Code when acting as a Coder agent. The role's name is `coder`.
 
 **Never run `git commit` or `git push`.** The user handles all commits and pushes manually.
 
 ## Terminology
 
-- **CR**: `${ROLE_ROOT}/COMMIT_REQUEST.md`, defines the Commit Request format
-- **RULES**: every `.md` file under `${ROLE_ROOT}/rules/`
+- **CR**: `.plato/coder/COMMIT_REQUEST.md`, defines the Commit Request format
+- **RULES**: every `.md` file under `plato-workspace/role-rules/coder/`
 - **.cr.md**: a generated Commit Request, path: `plato-workspace/tickets/<ticket-number>/.cr.md`
 - **ticket-number**: Read from `<ticket-number>` in the prompt
 - **task-id**: Read from `<task-id>` in the prompt
@@ -33,7 +31,7 @@ Work through the following steps in order:
 
 ### Step 1: Start Task
 
-Run `python plato-roles/scripts/status_cli.py coder run <ticket-number> <task-id> <session-id>` (registers the task in `coder.tasks` if it is not there yet, and sets it to `IN_PROGRESS`)
+Run `python .plato/scripts/status_cli.py coder run <ticket-number> <task-id> <session-id>` (registers the task in `coder.tasks` if it is not there yet, and sets it to `IN_PROGRESS`)
 
 ### Step 2: Do the Work
 
@@ -41,7 +39,7 @@ Work according to the instructions in **tasks.json** and **DESIGN**.
 
 ### Step 3: Generate CR
 
-After work is complete, **do not commit or push** — generate **.cr.md** instead, following the format defined in **CR**. Then run `python plato-roles/scripts/status_cli.py coder wait <ticket-number> <task-id>`
+After work is complete, **do not commit or push** — generate **.cr.md** instead, following the format defined in **CR**. Then run `python .plato/scripts/status_cli.py coder wait <ticket-number> <task-id>`
 
 ### Step 4: Echo
 
@@ -52,13 +50,13 @@ Echo the content of **.cr.md** to the user, reproducing it **verbatim** in your 
 After **.cr.md** is created, wait for the user's reply and act as follows:
 
 - **approve**:
-  1. For each `<rule file>: <rule text>` line in the **New Rules** section of **.cr.md**, append `<rule text>` to the **RULES** file `${ROLE_ROOT}/rules/<rule file>` (create the file if it does not exist)
-  2. Run `python plato-roles/scripts/status_cli.py coder approve <ticket-number> <task-id>`
+  1. For each `<rule file>: <rule text>` line in the **New Rules** section of **.cr.md**, append `<rule text>` to the **RULES** file `plato-workspace/role-rules/coder/<rule file>` (create the file if it does not exist)
+  2. Run `python .plato/scripts/status_cli.py coder approve <ticket-number> <task-id>`
   3. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next task. **The framework does not commit or push — remember to do it manually.**"
 
 - **reject**:
   1. Revert all code changes from this session
-  2. Run `python plato-roles/scripts/status_cli.py coder reject <ticket-number> <task-id>`
+  2. Run `python .plato/scripts/status_cli.py coder reject <ticket-number> <task-id>`
   3. Tell the user: "Change rejected. Use `/exit` to leave this session, then run `/plato <ticket-number>` to start this task over."
 
 - **remake**: Using the full diff from `git diff HEAD`, regenerate **.cr.md** from scratch following the format in **CR**, overwrite it, echo it to the user verbatim (as in Step 4), and continue waiting for a reply. Do not modify **status.json**.
@@ -68,6 +66,7 @@ After **.cr.md** is created, wait for the user's reply and act as follows:
 ## Load External Files
 
 Before starting the Startup Rules, read the following files:
-- **CR** (`${ROLE_ROOT}/COMMIT_REQUEST.md`)
-- **RULES** (every `.md` file under `${ROLE_ROOT}/rules/`)
+- **CR** (`.plato/coder/COMMIT_REQUEST.md`)
+- **RULES** (every `.md` file under `plato-workspace/role-rules/coder/`)
 - **DESIGN** (`plato-workspace/tickets/<ticket-number>/DESIGN.md`), if it exists
+- every `.md` file under `plato-workspace/project-context/`

@@ -2,7 +2,7 @@ from .base import RoleStrategy
 
 
 class DesignerStrategy(RoleStrategy):
-    role_file = "plato-roles/designer/DESIGNER.md"
+    role_file = ".plato/designer/DESIGNER.md"
 
     def build_start_command(self, session_id: str, ticket_number: str, _task_id: str) -> str:
         prompt = f"ticket-number={ticket_number}, session-id={session_id}"

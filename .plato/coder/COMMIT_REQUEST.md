@@ -31,7 +31,7 @@ project/
 - **Test Details**: Summary of test changes. See **CR Testing Methods** below
 - **Test Tree**: ASCII tree of test files changed in this change; see **CR Testing Methods** below
 - **Test Result**: Test outcome. See **CR Testing Methods** below
-- **New Rules** (optional): Format `<rule file>: <rule text>`, one rule per line. Appended to `${ROLE_ROOT}/rules/<rule file>` on approve. Leave empty if there are no new rules.
+- **New Rules**: Format `<rule file>: <rule text>`, one rule per line. Leave empty if there are no new rules.
 
 **defect**
 - **Root Cause**: Root cause of the defect
@@ -41,7 +41,7 @@ project/
 - **Test Details**: Summary of test changes. See **CR Testing Methods** below
 - **Test Tree**: ASCII tree of test files changed in this change; see **CR Testing Methods** below
 - **Test Result**: Test outcome. See **CR Testing Methods** below
-- **New Rules** (optional): Format `<rule file>: <rule text>`, one rule per line. Appended to `${ROLE_ROOT}/rules/<rule file>` on approve. Leave empty if there are no new rules.
+- **New Rules**: Format `<rule file>: <rule text>`, one rule per line. Leave empty if there are no new rules.
 
 ### CR Testing Methods
 

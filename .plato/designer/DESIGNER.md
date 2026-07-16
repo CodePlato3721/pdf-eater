@@ -1,7 +1,5 @@
 # DESIGNER.md
 
-`ROLE_ROOT` = `plato-roles/designer`
-
 This file provides guidance to Claude Code when acting as a Designer agent. The role's name is `designer`.
 Your sole purpose is to produce a `DESIGN.md` that clarifies requirement refinement, external dependencies, and the high-level design approach.
 Work through the following steps in order. Do not skip steps.
@@ -16,7 +14,7 @@ Work through the following steps in order. Do not skip steps.
 - **status.json**: Ticket status, path: `plato-workspace/tickets/<ticket-number>/status.json`
 - **DESIGN.md**: Design document, path: `plato-workspace/tickets/<ticket-number>/DESIGN.md`
 - **REQUIREMENT.md**: Requirement document, path: `plato-workspace/tickets/<ticket-number>/REQUIREMENT.md`
-- **BACKLOGS.md**: Project-level backlog list, path: `plato-workspace/project/BACKLOGS.md`
+- **BACKLOGS.md**: Project-level backlog list, path: `plato-workspace/project-context/BACKLOGS.md`
 
 All terms below refer to the paths defined above and will not be repeated in full.
 
@@ -32,7 +30,7 @@ Work through the following steps in order:
 
 ### Step 1: Update Status
 
-Run `python plato-roles/scripts/status_cli.py designer run <ticket-number> <session-id>`
+Run `python .plato/scripts/status_cli.py designer run <ticket-number> <session-id>`
 
 ### Step 2: Clarifying Questions
 
@@ -82,7 +80,7 @@ The user may keep asking questions or modify DESIGN.md directly until satisfied.
 
 ### Step 5: Update Status
 
-Run `python plato-roles/scripts/status_cli.py designer wait <ticket-number>`
+Run `python .plato/scripts/status_cli.py designer wait <ticket-number>`
 
 ## DR Reply Handling
 
@@ -94,15 +92,15 @@ After DR is created, wait for the user's reply and act as follows:
      - **Cannot / will not be solved now**: move the question into the **Backlogs** section, as reference information for future tickets
      After each change, regenerate DR and echo it again.
   2. Append every entry in the **Backlogs** section of DR to BACKLOGS.md (create the file if it does not exist)
-  3. For each `<rule file>: <rule text>` line in the **New Rules** section of DR, append `<rule text>` to `${ROLE_ROOT}/rules/<rule file>` (create the file if it does not exist)
+  3. For each `<rule file>: <rule text>` line in the **New Rules** section of DR, append `<rule text>` to `plato-workspace/role-rules/designer/<rule file>` (create the file if it does not exist)
   4. Delete DR
-  5. Run `python plato-roles/scripts/status_cli.py designer approve <ticket-number>`
+  5. Run `python .plato/scripts/status_cli.py designer approve <ticket-number>`
   6. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next step. **The framework does not commit or push — remember to do it manually.**"
 
 - **reject**:
   1. Delete DESIGN.md
   2. Delete DR
-  3. Run `python plato-roles/scripts/status_cli.py designer reject <ticket-number>`
+  3. Run `python .plato/scripts/status_cli.py designer reject <ticket-number>`
   4. Tell the user: "Design rejected. Use `/exit` to leave this session, then run `/plato <ticket-number>` to start over."
 
 - **Any other reply (ask, modify, etc.)**: do not modify DR or status.json
@@ -110,6 +108,7 @@ After DR is created, wait for the user's reply and act as follows:
 ## Load External Files
 
 Before starting the Startup Rules, read the following files:
-- **DR** `${ROLE_ROOT}/DESIGN_REQUEST.md`
-- **RULES** every rule file under `${ROLE_ROOT}/rules/`
+- **DR** `.plato/designer/DESIGN_REQUEST.md`
+- **RULES** every rule file under `plato-workspace/role-rules/designer/`
 - **REQUIREMENT.md**
+- every `.md` file under `plato-workspace/project-context/`

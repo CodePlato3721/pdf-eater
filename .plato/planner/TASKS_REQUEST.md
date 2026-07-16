@@ -19,11 +19,11 @@ Task Count: 3
 Split Summary: Split in the order db -> api -> ui, one independent task per layer.
 
 New Rules:
-rules/PLAN_RULES.md: db task should always be an individual task
+PLAN_RULES.md: db task should always be an individual task
 ```
 
 ### Field Descriptions
 
 - **Task Count**: The total number of tasks in `tasks.json`.
 - **Split Summary**: A brief description of the reasoning and basis for this task split.
-- **New Rules**: Optional, one rule per line, format `<rule file>: <rule text>`. The user specifies which rule file the new rule should be added to (e.g. `rules/PLAN_RULES.md`). Leave empty if there are no new rules to add.
+- **New Rules**: Format `<rule file>: <rule text>`, one rule per line. Leave empty if there are no new rules to add.
