@@ -31,21 +31,21 @@ Immediately after loading this file, do the following:
 
 Work through the following steps in order:
 
-### Step 1: Register Task
+### Step 1: Start Task
 
-Run `python plato-roles/scripts/status_cli.py task register <ticket-number> <task-id>`
+Run `python plato-roles/scripts/status_cli.py coder run <ticket-number> <task-id> <session-id>` (registers the task in `coder.tasks` if it is not there yet, and sets it to `IN_PROGRESS`)
 
 ### Step 2: Do the Work
 
-Work according to the instructions in **tasks.json** and **DESIGN**. Once work begins, run `python plato-roles/scripts/status_cli.py task run <ticket-number> <task-id> <session-id>`
+Work according to the instructions in **tasks.json** and **DESIGN**.
 
 ### Step 3: Generate CR
 
-After work is complete, **do not commit or push** — generate **.cr.md** instead, following the format defined in **CR**. Then run `python plato-roles/scripts/status_cli.py task wait <ticket-number> <task-id>`
+After work is complete, **do not commit or push** — generate **.cr.md** instead, following the format defined in **CR**. Then run `python plato-roles/scripts/status_cli.py coder wait <ticket-number> <task-id>`
 
 ### Step 4: Echo
 
-Run `python plato-roles/scripts/echo_cli.py cr <ticket-number>` to echo it to the user. Because tool output is collapsed in the terminal, reproduce the command's output **verbatim** in your reply — the CR itself is the report. Do not summarize, reword, or wrap it in your own format
+Echo the content of **.cr.md** to the user, reproducing it **verbatim** in your reply — the CR itself is the report. Do not summarize, reword, or wrap it in your own format.
 
 ## CR Reply Handling
 
@@ -53,15 +53,15 @@ After **.cr.md** is created, wait for the user's reply and act as follows:
 
 - **approve**:
   1. For each `<rule file>: <rule text>` line in the **New Rules** section of **.cr.md**, append `<rule text>` to the **RULES** file `${ROLE_ROOT}/rules/<rule file>` (create the file if it does not exist)
-  2. Run `python plato-roles/scripts/status_cli.py task approve <ticket-number> <task-id>`
-  3. Run `python plato-roles/scripts/echo_cli.py task approve <ticket-number>` and show its output to the user as-is.
+  2. Run `python plato-roles/scripts/status_cli.py coder approve <ticket-number> <task-id>`
+  3. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next task. **The framework does not commit or push — remember to do it manually.**"
 
 - **reject**:
   1. Revert all code changes from this session
-  2. Run `python plato-roles/scripts/status_cli.py task reject <ticket-number> <task-id>`
-  3. Run `python plato-roles/scripts/echo_cli.py task reject <ticket-number>` and show its output to the user as-is.
+  2. Run `python plato-roles/scripts/status_cli.py coder reject <ticket-number> <task-id>`
+  3. Tell the user: "Change rejected. Use `/exit` to leave this session, then run `/plato <ticket-number>` to start this task over."
 
-- **remake**: Using the full diff from `git diff HEAD`, regenerate **.cr.md** from scratch following the format in **CR**, overwrite it, run `python plato-roles/scripts/echo_cli.py cr <ticket-number>` to echo it to the user, and continue waiting for a reply. Do not modify **status.json**.
+- **remake**: Using the full diff from `git diff HEAD`, regenerate **.cr.md** from scratch following the format in **CR**, overwrite it, echo it to the user verbatim (as in Step 4), and continue waiting for a reply. Do not modify **status.json**.
 
 - **Any other reply (ask, modify, etc.)**: do not modify **.cr.md** or **status.json**
 

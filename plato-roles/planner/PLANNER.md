@@ -8,6 +8,8 @@ Work through the following steps in order. Do not skip steps.
 
 **Never run `git commit` or `git push`.** The user handles all commits and pushes manually.
 
+**Never edit status.json directly, and NEVER touch `coder.tasks` in it.** The `coder.tasks` array is managed exclusively by the Coder agent — do not create, fill, pre-register, or "helpfully" initialize it, even if it is empty or missing. Your ONLY permitted status.json operations are the `python plato-roles/scripts/status_cli.py planner ...` commands listed in the steps below. Any other write to status.json is a violation of this role's boundaries.
+
 ## Terminology
 
 - **TR**: Tasks Review Request. Format defined in `TASKS_REQUEST.md`. Filename: `.tr.md`, path: `plato-workspace/tickets/<ticket-number>/.tr.md`
@@ -23,13 +25,8 @@ All terms below refer to the paths defined above and will not be repeated in ful
 ## Startup Rules
 
 Immediately after loading this file, do the following:
-1. Read:
-   - `${ROLE_ROOT}/TASKS_REQUEST.md`
-   - every rule file under `${ROLE_ROOT}/rules/`
-2. Read ticket-number from the prompt.
-3. Read status.json to get the ticket's status.
-4. Read DESIGN.md to get the design context.
-5. Read REQUIREMENT.md (if it exists) to get the requirement.
+1. Read ticket-number from the prompt.
+2. Read status.json to get the ticket's status.
 
 ## Execution Rules
 
@@ -37,7 +34,7 @@ Work through the following steps in order:
 
 ### Step 1: Update Status
 
-Update status.json: set `planner.status` to `IN_PROGRESS` and `planner.session-id` to the session-id from the prompt.
+Run `python plato-roles/scripts/status_cli.py planner run <ticket-number> <session-id>`
 
 ### Step 2: Generate tasks.json
 
@@ -82,7 +79,7 @@ The user may keep asking questions or modify tasks.json directly until satisfied
 
 ### Step 4: Update Status
 
-Update status.json: set `planner.status` to `WAITING`.
+Run `python plato-roles/scripts/status_cli.py planner wait <ticket-number>`
 
 ## TR Reply Handling
 
@@ -91,13 +88,20 @@ After TR is created, wait for the user's reply and act as follows:
 - **approve**:
   1. For each `<rule file>: <rule text>` line in the **New Rules** section of TR, append `<rule text>` to `${ROLE_ROOT}/<rule file>` (create the file if it does not exist)
   2. Delete TR
-  3. Set `planner.status` in status.json to `DONE`. **Do NOT modify `coder.tasks` in status.json** — that array is managed exclusively by the Coder agent.
+  3. Run `python plato-roles/scripts/status_cli.py planner approve <ticket-number>`. This command is the ONLY status.json change in this step — as stated at the top of this file, `coder.tasks` must NOT be touched.
   4. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next step. **The framework does not commit or push — remember to do it manually.**"
 
 - **reject**:
   1. Delete tasks.json
   2. Delete TR
-  3. Set `planner.status` in status.json to `TODO`
+  3. Run `python plato-roles/scripts/status_cli.py planner reject <ticket-number>`
   4. Tell the user: "Task plan rejected. Use `/exit` to leave this session, then run `/plato <ticket-number>` to start over."
 
 - **Any other reply (ask, modify, etc.)**: do not modify TR or status.json
+
+## Load External Files
+
+Before starting the Startup Rules, read the following files:
+- **DR** `${ROLE_ROOT}/TASKS_REQUEST.md`
+- **RULES** every rule file under `${ROLE_ROOT}/rules/`
+- **DESIGN.md**

@@ -7,6 +7,12 @@
 ```
 Summary: <summary of the design>
 
+**Opening Questions**
+- <owner>: <open question>
+
+**Backlogs**
+- <backlog item>
+
 **New Rules**
 <rule file>: <rule text>
 ```
@@ -14,6 +20,14 @@ Summary: <summary of the design>
 Example:
 
 ```
+Summary: Split the monolith into a FastAPI backend and a React frontend.
+
+**Opening Questions**
+- DBA:需要一张新的 documents 表，等待 DBA 建表
+
+**Backlogs**
+- PM: 多用户会话隔离本期不做，未来单独开 ticket
+
 **New Rules**
 rules/NEVER.md: Don't start without external dependencies
 ```
@@ -21,8 +35,14 @@ rules/NEVER.md: Don't start without external dependencies
 ### Field Descriptions
 
 - **Summary**: Condensed summary of the design from `DESIGN.md`.
+- **Opening Questions**: Unresolved questions collected during the clarifying phase, one per line, each with its owner (PM, DBA, DevOps, Other Dev Team, Other). **The DR cannot be approved while this section is non-empty.** Each question is resolved in one of two ways:
+  1. **Solved**: remove it from Opening Questions and write the solution into `DESIGN.md`
+  2. **Cannot / will not be solved now**: move it into **Backlogs**, as reference information for future tickets
+- **Backlogs**: Deferred opening questions kept as reference for creating future tickets. On approval they are appended to `plato-workspace/project/BACKLOGS.md`. Leave empty if there are none.
 - **New Rules**: Optional, one rule per line, format `<rule file>: <rule text>`. The user specifies which rule file the new rule should be added to (e.g. `rules/NEVER.md`). Leave empty if there are no new rules to add.
 
 ### On Approval
 
-If `.dr.md` is approved and the **New Rules** section is not empty, for each `<rule file>: <rule text>` line, append `<rule text>` to `<rule file>`. If `<rule file>` does not exist yet, create it first.
+1. If **Opening Questions** is not empty, the approve is refused until every question has been resolved (solved into `DESIGN.md`, or moved to **Backlogs**).
+2. Append every entry in **Backlogs** to `plato-workspace/project/BACKLOGS.md`. If the file does not exist yet, create it first.
+3. If the **New Rules** section is not empty, for each `<rule file>: <rule text>` line, append `<rule text>` to `<rule file>`. If `<rule file>` does not exist yet, create it first.

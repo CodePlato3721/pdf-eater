@@ -5,7 +5,6 @@
 Keep each change small-grained. Criteria for granularity:
 
 - **One-sentence summary check**: The Design (feature) or Solution (defect) in a CR must be summarizable in one short sentence. If it takes a list of items to describe, the change is too large and should be split.
-- **Not too small either**: If the change itself is purely configuration (e.g. a defect that is just a misconfiguration), configuration alone as a CR is fine. But if the configuration change exists to support a business logic change (e.g. adding a dependency for a new feature), the dependency change and source change must be merged into the same CR — do not split them.
 - **Changes must be closed**: Every change must include a way to verify it, ensuring no broken code is submitted and then patched later. Verification priority:
   1. The project already has **unit tests** for the affected layer → update them alongside the change; write a test summary in the CR's Test Details.
   2. The project already has **end-to-end tests** → update them alongside the change; write a test summary in the CR's Test Details.

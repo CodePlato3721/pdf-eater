@@ -16,18 +16,15 @@ Work through the following steps in order. Do not skip steps.
 - **status.json**: Ticket status, path: `plato-workspace/tickets/<ticket-number>/status.json`
 - **DESIGN.md**: Design document, path: `plato-workspace/tickets/<ticket-number>/DESIGN.md`
 - **REQUIREMENT.md**: Requirement document, path: `plato-workspace/tickets/<ticket-number>/REQUIREMENT.md`
+- **BACKLOGS.md**: Project-level backlog list, path: `plato-workspace/project/BACKLOGS.md`
 
 All terms below refer to the paths defined above and will not be repeated in full.
 
 ## Startup Rules
 
 Immediately after loading this file, do the following:
-1. Read:
-   - `${ROLE_ROOT}/DESIGN_REQUEST.md`
-   - every rule file under `${ROLE_ROOT}/rules/`
-2. Read ticket-number from the prompt.
-3. Read status.json to get the ticket's status.
-4. Read REQUIREMENT.md (if it exists) to get the requirement.
+1. Read ticket-number from the prompt.
+2. Read status.json to get the ticket's status.
 
 ## Execution Rules
 
@@ -35,19 +32,31 @@ Work through the following steps in order:
 
 ### Step 1: Update Status
 
-Update status.json: set `designer.status` to `IN_PROGRESS` and `designer.session-id` to the session-id from the prompt.
+Run `python plato-roles/scripts/status_cli.py designer run <ticket-number> <session-id>`
 
 ### Step 2: Clarifying Questions
 
-Ask the following questions in order. Ask one at a time, wait for the answer before asking the next, and record all answers:
+The questioning phase has three parts, in order. Ask one question at a time, wait for the answer before asking the next, and record all answers.
 
-1. "Does this ticket have any requirements that need refinement? For example, building a login page should also account for: what happens on login failure? What are the validation rules? Is a 'forgot password' link needed?"
-2. "Does this requirement refinement need PM confirmation? How long will it take to get confirmed?"
-3. "Does this ticket have any external dependencies? For example, database dependencies, API dependencies, etc. — needing a table that has to wait on a DBA to create it, or an API that has to wait on another engineer to build it?"
-4. "Who needs to confirm these external dependencies? How long will that take?"
-5. "What is your design for this requirement? No details needed — just the general implementation architecture and steps."
+**Part 1 — Rough design**
 
-Do not proceed to Step 3 until all five answers are recorded.
+Ask: "What is your design for this requirement? No details needed — just the general implementation architecture and steps."
+
+**Part 2 — Opening questions from the checklist**
+
+Walk through the checklist below, one item at a time. For each item, ask whether this ticket has any open questions that depend on that party (requirement confirmations, external dependencies, blockers, etc.). Record every open question raised, together with its owner, into the **Opening Questions** list:
+
+1. PM
+2. DBA
+3. DevOps
+4. Other Dev Team
+5. Other
+
+**Part 3 — Design refinement**
+
+Based on the answers so far, come up with 3 concrete design questions of your own (edge cases, interfaces, data flow, scope boundaries, etc.) and ask them one by one, to refine the design.
+
+Do not proceed to Step 3 until all three parts are done and recorded.
 
 ### Step 3: Generate DESIGN.md
 
@@ -56,17 +65,11 @@ Generate DESIGN.md based on the answers gathered in Step 2, with the following s
 ```
 # DESIGN.md
 
-## Requirement
-[Original requirement + refined requirement points + whether refinement needs PM confirmation and the expected timeline]
-
-## External Dependencies
-[List of external dependencies + current status of each + who needs to confirm them and the expected timeline]
-
-## External Dependency Strategy
-[How to handle unsatisfied external dependencies — either wait until all are satisfied before starting, or narrow the scope to start with what is already available]
+## Requirement Summary
+[Condensed summary of the requirement]
 
 ## Design
-[Design/flow approach, no technical details]
+[Design/flow approach, refined with the Part 3 answers, no technical details]
 ```
 
 ### Step 4: Generate DR
@@ -79,22 +82,34 @@ The user may keep asking questions or modify DESIGN.md directly until satisfied.
 
 ### Step 5: Update Status
 
-Update status.json: set `designer.status` to `WAITING`.
+Run `python plato-roles/scripts/status_cli.py designer wait <ticket-number>`
 
 ## DR Reply Handling
 
 After DR is created, wait for the user's reply and act as follows:
 
 - **approve**:
-  1. For each `<rule file>: <rule text>` line in the **New Rules** section of DR, append `<rule text>` to `${ROLE_ROOT}/rules/<rule file>` (create the file if it does not exist)
-  2. Delete DR
-  3. Set `designer.status` in status.json to `DONE`
-  4. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next step. **The framework does not commit or push — remember to do it manually.**"
+  1. Check the **Opening Questions** section of DR. If it is **not empty, refuse the approve**: tell the user that every opening question must be resolved first, in one of two ways, then keep waiting for replies:
+     - **Solved**: remove the question from Opening Questions and write the solution into DESIGN.md
+     - **Cannot / will not be solved now**: move the question into the **Backlogs** section, as reference information for future tickets
+     After each change, regenerate DR and echo it again.
+  2. Append every entry in the **Backlogs** section of DR to BACKLOGS.md (create the file if it does not exist)
+  3. For each `<rule file>: <rule text>` line in the **New Rules** section of DR, append `<rule text>` to `${ROLE_ROOT}/rules/<rule file>` (create the file if it does not exist)
+  4. Delete DR
+  5. Run `python plato-roles/scripts/status_cli.py designer approve <ticket-number>`
+  6. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next step. **The framework does not commit or push — remember to do it manually.**"
 
 - **reject**:
   1. Delete DESIGN.md
   2. Delete DR
-  3. Set `designer.status` in status.json to `TODO`
+  3. Run `python plato-roles/scripts/status_cli.py designer reject <ticket-number>`
   4. Tell the user: "Design rejected. Use `/exit` to leave this session, then run `/plato <ticket-number>` to start over."
 
 - **Any other reply (ask, modify, etc.)**: do not modify DR or status.json
+
+## Load External Files
+
+Before starting the Startup Rules, read the following files:
+- **DR** `${ROLE_ROOT}/DESIGN_REQUEST.md`
+- **RULES** every rule file under `${ROLE_ROOT}/rules/`
+- **REQUIREMENT.md**
