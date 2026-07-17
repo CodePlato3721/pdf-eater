@@ -1,0 +1,18 @@
+{
+    "type": "feature",
+    "title": "给回答增加原文引用的部分",
+    "unit-test-path": "backend/tests/unit",
+    "e2e-test-path": "frontend/tests/e2e",
+    "designer": {
+        "session-id": "",
+        "status": "TODO"
+    },
+    "planner": {
+        "session-id": "",
+        "status": "TODO"
+    },
+    "coder": {
+        "status": "TODO",
+        "tasks": []
+    } 
+}
