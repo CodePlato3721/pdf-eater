@@ -1,0 +1,28 @@
+{
+    "tasks": [
+        {
+            "id": "TASK-01",
+            "description": "Switch backend/core/loader.py's PDFMinerLoader from mode=\"single\" to mode=\"page\" so load_and_split() produces one Document per PDF page (each chunk's metadata carries a page number afterward). Update/add unit tests in backend/tests/unit covering the page-per-chunk metadata.",
+            "tech-stack": "ingestion",
+            "business-domain": "citation"
+        },
+        {
+            "id": "TASK-02",
+            "description": "Add a new core module (e.g. backend/core/citation.py) implementing hit-sentence identification and quote-block building: split retrieved chunks' text into page-tagged sentences, score each against the generated answer to find the single highest-scoring \"hit sentence\", then build a quote of the hit sentence plus up to 2 sentences before/after within the same page (truncating gracefully at page boundaries), plus a formatter that renders the quote with a page-number separator line. Cover with unit tests in backend/tests/unit, including first/last-sentence-on-page edge cases.",
+            "tech-stack": "core",
+            "business-domain": "citation"
+        },
+        {
+            "id": "TASK-03",
+            "description": "Wire the citation module from TASK-02 into backend/services/qa.py::ask(): after the chain produces source_documents and answer, run hit-sentence identification over the 4 retrieved chunks, build the quote block for the single top page, and append it (with its separator line) to the returned answer string. Add/update unit tests in backend/tests/unit for the ask() flow with citation appended.",
+            "tech-stack": "service",
+            "business-domain": "citation"
+        },
+        {
+            "id": "TASK-04",
+            "description": "Add an e2e test in frontend/tests/e2e verifying that after uploading a PDF and asking a question, the assistant's rendered answer includes the appended source-quote block with its page-number separator line (no frontend source code changes expected, since the quote is embedded in the plain answer string already rendered as-is).",
+            "tech-stack": "e2e",
+            "business-domain": "citation"
+        }
+    ]
+}
