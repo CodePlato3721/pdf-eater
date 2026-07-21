@@ -2,6 +2,8 @@ import sys
 
 from status.ticket_status import TicketStatus
 
+sys.stdout.reconfigure(encoding="utf-8")
+
 
 def format_report(data: dict) -> str:
     lines = [
