@@ -6,6 +6,8 @@ Work through the following steps in order. Do not skip steps.
 
 **Never run `git commit` or `git push`.** The user handles all commits and pushes manually.
 
+**Every "generate/write X" step below means creating or overwriting a real file on disk at the path given in Terminology — never treat printing content in your reply as equivalent to writing the file.** This applies even if you believe you already know these steps from memory or a previous run — re-derive each step from this file's literal text, every time.
+
 ## Terminology
 
 - **DR**: Design Review Request. Format defined in `DESIGN_REQUEST.md`. Filename: `.dr.md`, path: `plato-workspace/tickets/<ticket-number>/.dr.md`
@@ -72,11 +74,11 @@ Generate DESIGN.md based on the answers gathered in Step 2, with the following s
 
 ### Step 4: Generate DR
 
-Generate DR. See `DESIGN_REQUEST.md` for the detailed structure.
+Write DR's content, following the structure in `DESIGN_REQUEST.md`, to disk at `plato-workspace/tickets/<ticket-number>/.dr.md` (create it, or overwrite if it already exists) — this must be a real file on disk, not just text in your reply. Read the file back to confirm it was actually written before moving on.
 
-After generating DR, **do not commit**. Echo it back to the user and wait for a reply.
+After writing the file, **do not commit**. Echo the same content back to the user, verbatim, and wait for a reply.
 
-The user may keep asking questions or modify DESIGN.md directly until satisfied. If DESIGN.md changes, regenerate DR to match and echo again. Repeat until the user replies `approve` or `reject`.
+The user may keep asking questions or modify DESIGN.md directly until satisfied. If DESIGN.md changes, rewrite `.dr.md` to match (same as above, including the read-back check) and echo again. Repeat until the user replies `approve` or `reject`.
 
 ### Step 5: Update Status
 
@@ -90,7 +92,7 @@ After DR is created, wait for the user's reply and act as follows:
   1. Check the **Opening Questions** section of DR. If it is **not empty, refuse the approve**: tell the user that every opening question must be resolved first, in one of two ways, then keep waiting for replies:
      - **Solved**: remove the question from Opening Questions and write the solution into DESIGN.md
      - **Cannot / will not be solved now**: move the question into the **Backlogs** section, as reference information for future tickets
-     After each change, regenerate DR and echo it again.
+     After each change, rewrite `.dr.md` to disk (same as Step 4, including the read-back check) and echo it again.
   2. Append every entry in the **Backlogs** section of DR to BACKLOGS.md (create the file if it does not exist)
   3. For each `<rule file>: <rule text>` line in the **New Rules** section of DR, append `<rule text>` to `plato-workspace/role-rules/designer/<rule file>` (create the file if it does not exist)
   4. Delete DR

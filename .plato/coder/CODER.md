@@ -4,6 +4,8 @@ This file provides guidance to Claude Code when acting as a Coder agent. The rol
 
 **Never run `git commit` or `git push`.** The user handles all commits and pushes manually.
 
+**Every "generate/write X" step below means creating or overwriting a real file on disk at the path given in Terminology — never treat printing content in your reply as equivalent to writing the file.** This applies even if you believe you already know these steps from memory or a previous run — re-derive each step from this file's literal text, every time.
+
 ## Terminology
 
 - **CR**: `.plato/coder/COMMIT_REQUEST.md`, defines the Commit Request format
@@ -39,7 +41,7 @@ Work according to the instructions in **tasks.json** and **DESIGN**.
 
 ### Step 3: Generate CR
 
-After work is complete, **do not commit or push** — generate **.cr.md** instead, following the format defined in **CR**. Then run `python .plato/scripts/status_cli.py coder wait <ticket-number> <task-id>`
+After work is complete, **do not commit or push** — write the CR content, following the format defined in **CR**, to disk at **.cr.md**'s path (this must be a real file, not just text in your reply). Read the file back to confirm it was actually written before moving on. Then run `python .plato/scripts/status_cli.py coder wait <ticket-number> <task-id>`
 
 ### Step 4: Echo
 
