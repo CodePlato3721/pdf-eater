@@ -4,8 +4,8 @@
     "unit-test-path": "backend/tests/unit",
     "e2e-test-path": "frontend/tests/e2e",
     "designer": {
-        "session-id": "",
-        "status": "TODO"
+        "session-id": "eea53ddf-6df1-4d60-94e0-13107ed11765",
+        "status": "DONE"
     },
     "planner": {
         "session-id": "",
@@ -14,5 +14,5 @@
     "coder": {
         "status": "TODO",
         "tasks": []
-    } 
+    }
 }
