@@ -2,6 +2,7 @@ from langchain_openai import ChatOpenAI
 from langchain_classic.chains import ConversationalRetrievalChain
 from langchain_core.vectorstores import VectorStore
 from config import MODEL_NAME, TOP_K
+from core.http_logging import create_logging_http_client
 
 
 def create_chain(vectorstore: VectorStore):
@@ -19,7 +20,7 @@ def create_chain(vectorstore: VectorStore):
         search_kwargs={"k": TOP_K},
     )
     qa = ConversationalRetrievalChain.from_llm(
-        llm=ChatOpenAI(model=MODEL_NAME, temperature=0),
+        llm=ChatOpenAI(model=MODEL_NAME, temperature=0, http_client=create_logging_http_client("LLM")),
         retriever=retriever,
         return_source_documents=True,
         return_generated_question=True,

@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -11,6 +12,8 @@ from services import ingestion, qa
 from services.ingestion import PDFNotReadableError
 from services.qa import NoDocumentLoadedError
 from services.state import state
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 
 # backend/.env takes priority over pre-existing environment variables (e.g. a
 # stale user-level OPENAI_API_KEY), hence override=True. Safe below the imports:

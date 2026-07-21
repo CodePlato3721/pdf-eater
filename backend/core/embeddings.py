@@ -1,6 +1,8 @@
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 
+from core.http_logging import create_logging_http_client
+
 
 def create_vectorstore(docs):
     """
@@ -12,7 +14,7 @@ def create_vectorstore(docs):
     Returns:
         FAISS vectorstore instance.
     """
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(http_client=create_logging_http_client("EMBEDDING"))
     vectorstore = FAISS.from_documents(docs, embeddings)
     return vectorstore
 
@@ -38,5 +40,5 @@ def load_vectorstore(path: str):
     Returns:
         FAISS vectorstore instance.
     """
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(http_client=create_logging_http_client("EMBEDDING"))
     return FAISS.load_local(path, embeddings, allow_dangerous_deserialization=True)

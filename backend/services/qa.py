@@ -1,4 +1,8 @@
+import logging
+
 from services.state import AppState, state
+
+logger = logging.getLogger("pdf_eater.retrieval")
 
 
 class NoDocumentLoadedError(Exception):
@@ -34,8 +38,15 @@ def ask(question: str, app_state: AppState = state) -> str:
     app_state.chat_history.append((question, answer))
     app_state.save_history()
     app_state.last_query = result.get("generated_question", "")
+    source_documents = result.get("source_documents", [])
     app_state.last_sources = [
-        {"content": doc.page_content, "metadata": doc.metadata}
-        for doc in result.get("source_documents", [])
+        {"content": doc.page_content, "metadata": doc.metadata} for doc in source_documents
     ]
+
+    total = len(source_documents)
+    for i, doc in enumerate(source_documents, start=1):
+        logger.info(
+            "[RETRIEVAL] chunk %d/%d metadata=%s\n%s", i, total, doc.metadata, doc.page_content
+        )
+
     return answer
