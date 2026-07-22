@@ -22,7 +22,7 @@ def load_and_split(pdf_bytes_list: list) -> list:
             tmp.write(pdf_bytes)
             tmp_path = tmp.name
         try:
-            loader = PDFMinerLoader(tmp_path)
+            loader = PDFMinerLoader(tmp_path, mode="page")
             docs = loader.load()
         finally:
             os.unlink(tmp_path)

@@ -13,6 +13,14 @@
     },
     "coder": {
         "status": "TODO",
-        "tasks": []
+        "tasks": [
+            {
+                "id": "TASK-01",
+                "status": "DONE",
+                "coder": {
+                    "session-id": "11a2168c-5582-44fe-92e0-85e617cd15e7"
+                }
+            }
+        ]
     }
 }
