@@ -20,6 +20,13 @@
                 "coder": {
                     "session-id": "11a2168c-5582-44fe-92e0-85e617cd15e7"
                 }
+            },
+            {
+                "id": "TASK-02",
+                "status": "DONE",
+                "coder": {
+                    "session-id": "35e87abe-cb52-43d3-9d70-d3bdf76459a1"
+                }
             }
         ]
     }
