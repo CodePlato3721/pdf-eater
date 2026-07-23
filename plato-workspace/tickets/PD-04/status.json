@@ -34,6 +34,13 @@
                 "coder": {
                     "session-id": "dce77cda-b2cc-435d-98ac-ee5395d84fea"
                 }
+            },
+            {
+                "id": "TASK-04",
+                "status": "DONE",
+                "coder": {
+                    "session-id": "7aee60b2-eeb3-4fd7-a07e-1f76d0e6d85f"
+                }
             }
         ]
     }
