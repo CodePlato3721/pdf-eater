@@ -1,4 +1,6 @@
-# Continue Flow
+# Feature Continue Flow
+
+Reached when `status.json`'s `type` field is `feature`.
 
 ## Step 1 — Report current status
 

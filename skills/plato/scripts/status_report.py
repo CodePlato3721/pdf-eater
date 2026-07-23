@@ -9,6 +9,13 @@ def format_report(data: dict) -> str:
     lines = [
         f"ticket number: {data['ticket_number']}",
         f"title: {data['title']}",
+    ]
+
+    if data.get("type") == "defect":
+        lines.append(f"fixer: {data['fixer']}")
+        return "\n".join(lines)
+
+    lines += [
         f"designer: {data['designer']}",
         f"planner: {data['planner']}",
         f"coder: {data['coder']}",

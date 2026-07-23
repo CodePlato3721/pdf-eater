@@ -91,21 +91,49 @@ def task_wait(ticket_number: str, task_id: str) -> None:
     set_task_status(ticket_number, task_id, "WAITING")
 
 
-def delete_cr(ticket_number: str) -> None:
-    cr_path = Path("plato-workspace/tickets") / ticket_number / ".cr.md"
-    if cr_path.exists():
-        cr_path.unlink()
-        print(f"deleted {cr_path.as_posix()}")
+def delete_ticket_file(ticket_number: str, filename: str) -> None:
+    path = Path("plato-workspace/tickets") / ticket_number / filename
+    if path.exists():
+        path.unlink()
+        print(f"deleted {path.as_posix()}")
 
 
 def task_approve(ticket_number: str, task_id: str) -> None:
-    delete_cr(ticket_number)
+    delete_ticket_file(ticket_number, ".cr.md")
     set_task_status(ticket_number, task_id, "DONE")
 
 
 def task_reject(ticket_number: str, task_id: str) -> None:
-    delete_cr(ticket_number)
+    delete_ticket_file(ticket_number, ".cr.md")
     set_task_status(ticket_number, task_id, "TODO", session_id="")
+
+
+def set_fixer_status(ticket_number: str, status: str, session_id: str | None = None) -> None:
+    path, data = load_status(ticket_number)
+    entry = data.setdefault("fixer", {})
+    entry["status"] = status
+    if session_id is not None:
+        entry["session-id"] = session_id
+    save_status(path, data)
+    print(f"fixer in ticket {ticket_number} set to {status}")
+
+
+def fixer_run(ticket_number: str, session_id: str) -> None:
+    set_fixer_status(ticket_number, "IN_PROGRESS", session_id)
+
+
+def fixer_wait(ticket_number: str) -> None:
+    set_fixer_status(ticket_number, "WAITING")
+
+
+def fixer_approve(ticket_number: str) -> None:
+    delete_ticket_file(ticket_number, ".fr.md")
+    set_fixer_status(ticket_number, "DONE")
+
+
+def fixer_reject(ticket_number: str) -> None:
+    delete_ticket_file(ticket_number, ".fr.md")
+    set_fixer_status(ticket_number, "TODO", session_id="")
 
 
 def main() -> None:
@@ -157,6 +185,28 @@ def main() -> None:
     reject_parser.add_argument("ticket_number")
     reject_parser.add_argument("task_id")
 
+    fixer_parser = subparsers.add_parser("fixer", help="fixer role status commands (defect tickets)")
+    fixer_subparsers = fixer_parser.add_subparsers(dest="fixer_command", required=True)
+
+    fixer_run_parser = fixer_subparsers.add_parser(
+        "run", help="set fixer's status to IN_PROGRESS and record its session-id"
+    )
+    fixer_run_parser.add_argument("ticket_number")
+    fixer_run_parser.add_argument("session_id")
+
+    fixer_wait_parser = fixer_subparsers.add_parser("wait", help="set fixer's status to WAITING")
+    fixer_wait_parser.add_argument("ticket_number")
+
+    fixer_approve_parser = fixer_subparsers.add_parser(
+        "approve", help="delete .fr.md and set fixer's status to DONE"
+    )
+    fixer_approve_parser.add_argument("ticket_number")
+
+    fixer_reject_parser = fixer_subparsers.add_parser(
+        "reject", help="delete .fr.md, set fixer's status back to TODO and clear its session-id"
+    )
+    fixer_reject_parser.add_argument("ticket_number")
+
     args = parser.parse_args()
 
     if args.command in ROLES and args.role_command == "run":
@@ -175,6 +225,14 @@ def main() -> None:
         task_approve(args.ticket_number, args.task_id)
     elif args.command == "coder" and args.coder_command == "reject":
         task_reject(args.ticket_number, args.task_id)
+    elif args.command == "fixer" and args.fixer_command == "run":
+        fixer_run(args.ticket_number, args.session_id)
+    elif args.command == "fixer" and args.fixer_command == "wait":
+        fixer_wait(args.ticket_number)
+    elif args.command == "fixer" and args.fixer_command == "approve":
+        fixer_approve(args.ticket_number)
+    elif args.command == "fixer" and args.fixer_command == "reject":
+        fixer_reject(args.ticket_number)
 
 
 if __name__ == "__main__":

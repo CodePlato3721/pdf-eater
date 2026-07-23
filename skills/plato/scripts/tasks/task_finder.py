@@ -31,6 +31,12 @@ class ActiveStepFinder:
     def find(self) -> dict:
         status = json.loads(self._status_path.read_text(encoding="utf-8"))
 
+        if status.get("type") == "defect":
+            fixer = status.get("fixer", {})
+            if fixer.get("status") != "DONE":
+                return self._result("fixer", fixer.get("status", "TODO"), fixer.get("session-id", ""))
+            return self._result("none", "DONE", "")
+
         designer = status.get("designer", {})
         if designer.get("status") != "DONE":
             return self._result("designer", designer.get("status", "TODO"), designer.get("session-id", ""))
@@ -40,18 +46,25 @@ class ActiveStepFinder:
             return self._result("planner", planner.get("status", "TODO"), planner.get("session-id", ""))
 
         coder = status.get("coder", {})
-        if coder.get("status") != "DONE":
-            active_task = _find_active_coder_task(coder, self.ticket_number)
-            if active_task is not None:
-                return self._result(
-                    "coder",
-                    active_task.get("status", "TODO"),
-                    active_task.get("coder", {}).get("session-id", ""),
-                    task_id=active_task.get("id", ""),
-                )
-            return self._result("coder", coder.get("status", "TODO"), "")
+        active_task = _find_active_coder_task(coder, self.ticket_number)
+        if active_task is not None:
+            return self._result(
+                "coder",
+                active_task.get("status", "TODO"),
+                active_task.get("coder", {}).get("session-id", ""),
+                task_id=active_task.get("id", ""),
+            )
 
-        return self._result("none", "DONE", "")
+        if _load_plan_tasks(self.ticket_number):
+            # Every task in tasks.json is registered in coder.tasks and DONE.
+            # (coder.status itself is never written by any role step — it's
+            # not a reliable completion signal — so completion is derived
+            # from tasks.json coverage instead.)
+            return self._result("none", "DONE", "")
+
+        # tasks.json doesn't exist yet or is empty — nothing for the coder
+        # to do yet.
+        return self._result("coder", coder.get("status", "TODO"), "")
 
     @staticmethod
     def _result(role: str, status: str, session_id: str, task_id: str = "") -> dict:

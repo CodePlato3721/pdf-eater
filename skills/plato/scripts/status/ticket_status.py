@@ -12,12 +12,19 @@ class TicketStatus:
 
     def read(self) -> dict:
         raw = json.loads(self._path.read_text(encoding="utf-8"))
-        tasks = raw.get("coder", {}).get("tasks", [])
-        return {
+        result = {
             "ticket_number": self.ticket_number,
+            "type": raw.get("type", ""),
             "title": raw.get("title", ""),
-            "designer": raw.get("designer", {}).get("status", ""),
-            "planner": raw.get("planner", {}).get("status", ""),
-            "coder": raw.get("coder", {}).get("status", ""),
-            "tasks": [{"id": t.get("id", ""), "status": t.get("status", "")} for t in tasks],
         }
+
+        if result["type"] == "defect":
+            result["fixer"] = raw.get("fixer", {}).get("status", "")
+            return result
+
+        tasks = raw.get("coder", {}).get("tasks", [])
+        result["designer"] = raw.get("designer", {}).get("status", "")
+        result["planner"] = raw.get("planner", {}).get("status", "")
+        result["coder"] = raw.get("coder", {}).get("status", "")
+        result["tasks"] = [{"id": t.get("id", ""), "status": t.get("status", "")} for t in tasks]
+        return result
