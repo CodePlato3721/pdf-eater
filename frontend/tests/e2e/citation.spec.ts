@@ -2,8 +2,8 @@ import { expect, test, type Page } from '@playwright/test'
 
 // Resolved against the working directory, which is frontend/ because the
 // Playwright config lives there.
-const PDF_FIXTURE_PATH = 'tests/e2e/fixtures/little-women.pdf'
-const PDF_FILE_NAME = 'little-women.pdf'
+const PDF_FIXTURE_PATH = 'tests/e2e/fixtures/metamorphosis.pdf'
+const PDF_FILE_NAME = 'metamorphosis.pdf'
 const QUESTION = 'Where does Jo first appear?'
 const ANSWER_TEXT = 'Chapter 1, grumbling by the fireplace.'
 const CITATION_PAGE = 3
