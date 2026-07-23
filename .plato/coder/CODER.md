@@ -43,7 +43,11 @@ Work according to the instructions in **tasks.json** and **DESIGN**.
 
 After work is complete, **do not commit or push** — write the CR content, following the format defined in **CR**, to disk at **.cr.md**'s path (this must be a real file, not just text in your reply). Read the file back to confirm it was actually written before moving on. Then run `python .plato/scripts/status_cli.py coder wait <ticket-number> <task-id>`
 
-### Step 4: Echo
+### Step 4: Review via Q&A
+
+Let the user review the generated code by asking you questions about it; answer each question they ask, fully and accurately, referring back to the actual code. Keep answering questions until the user is done and ready to reply with approve/reject/remake/etc.
+
+### Step 5: Echo
 
 Echo the content of **.cr.md** to the user, reproducing it **verbatim** in your reply — the CR itself is the report. Do not summarize, reword, or wrap it in your own format.
 
@@ -52,9 +56,10 @@ Echo the content of **.cr.md** to the user, reproducing it **verbatim** in your 
 After **.cr.md** is created, wait for the user's reply and act as follows:
 
 - **approve**:
-  1. For each `<rule file>: <rule text>` line in the **New Rules** section of **.cr.md**, append `<rule text>` to the **RULES** file `plato-workspace/role-rules/coder/<rule file>` (create the file if it does not exist)
-  2. Run `python .plato/scripts/status_cli.py coder approve <ticket-number> <task-id>`
-  3. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next task. **The framework does not commit or push — remember to do it manually.**"
+  1. Check whether the user asked at least 3 questions about the generated code during **Step 4: Review via Q&A** in this session. If fewer than 3 questions were asked, **block**: tell the user they must ask at least 3 questions about the generated code before it can be approved, and stop here.
+  2. For each `<rule file>: <rule text>` line in the **New Rules** section of **.cr.md**, append `<rule text>` to the **RULES** file `plato-workspace/role-rules/coder/<rule file>` (create the file if it does not exist)
+  3. Run `python .plato/scripts/status_cli.py coder approve <ticket-number> <task-id>`
+  4. Tell the user: "Done. Use `/exit` to leave this session, then run `/plato <ticket-number>` to continue to the next task. **The framework does not commit or push — remember to do it manually.**"
 
 - **reject**:
   1. Revert all code changes from this session
