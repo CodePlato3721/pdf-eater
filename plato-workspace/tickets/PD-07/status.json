@@ -1,0 +1,10 @@
+{
+    "type": "defect",
+    "title": "Incorrect answer for \"When does Professor Friedrich Bhaer first appear?\"",
+    "unit-test-path": "backend/tests/unit",
+    "e2e-test-path": "frontend/tests/e2e",
+    "fixer": {
+        "session-id": "d2cb42e3-e865-41bb-883e-e2a71d6f58e7",
+        "status": "IN_PROGRESS"
+    }
+}
