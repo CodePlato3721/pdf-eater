@@ -1,8 +1,5 @@
-import logging
-
+from core.citation import build_citation_block
 from services.state import AppState, state
-
-logger = logging.getLogger("pdf_eater.retrieval")
 
 
 class NoDocumentLoadedError(Exception):
@@ -21,7 +18,8 @@ def ask(question: str, app_state: AppState = state) -> str:
         app_state: Session state to read/update; defaults to the app singleton.
 
     Returns:
-        The chain's answer text.
+        The chain's answer text, with a source-quote citation block appended
+        when a supporting sentence is found in the retrieved chunks.
 
     Raises:
         NoDocumentLoadedError: If no document has been ingested yet.
@@ -34,19 +32,14 @@ def ask(question: str, app_state: AppState = state) -> str:
     history = [tuple(turn) for turn in app_state.chat_history]
     result = app_state.chain.invoke({"question": question, "chat_history": history})
     answer = result["answer"]
+    source_documents = result.get("source_documents", [])
+    answer_with_citation = answer + build_citation_block(source_documents, answer)
 
-    app_state.chat_history.append((question, answer))
+    app_state.chat_history.append((question, answer_with_citation))
     app_state.save_history()
     app_state.last_query = result.get("generated_question", "")
-    source_documents = result.get("source_documents", [])
     app_state.last_sources = [
         {"content": doc.page_content, "metadata": doc.metadata} for doc in source_documents
     ]
 
-    total = len(source_documents)
-    for i, doc in enumerate(source_documents, start=1):
-        logger.info(
-            "[RETRIEVAL] chunk %d/%d metadata=%s\n%s", i, total, doc.metadata, doc.page_content
-        )
-
-    return answer
+    return answer_with_citation
