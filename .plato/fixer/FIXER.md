@@ -33,19 +33,23 @@ Work through the following steps in order:
 
 Run `python .plato/scripts/status_cli.py fixer run <ticket-number> <session-id>`
 
-### Step 2: Find Root Cause
+### Step 2: Validate DEFECT.md
 
-Reproduce the defect described in DEFECT.md and investigate to find its root cause. **Do not fix anything yet.** Present the root cause to the user in your reply and wait for them to confirm it before proceeding to Step 3. If the user disagrees or points you elsewhere, keep investigating and re-present until they confirm.
+Check that DEFECT.md has both a `# Description` section and a `# Steps to Reproduce` section, and that each section has actual content (not empty). If either section is missing or empty, **block**: tell the user they must fill in both the Description and Steps to Reproduce sections in DEFECT.md before you can proceed, and stop here.
 
-### Step 3: Fix
+### Step 3: Find Root Cause
+
+Reproduce the defect described based on Steps to Reproduce in DEFECT.md and investigate to find its root cause. **Do not fix anything yet.** Present the root cause to the user in your reply and wait for them to confirm it before proceeding to Step 4. If the user disagrees or points you elsewhere, keep investigating and re-present until they confirm.
+
+### Step 4: Fix
 
 Once the root cause is confirmed, implement the fix.
 
-### Step 4: Generate FR
+### Step 5: Generate FR
 
 After work is complete, **do not commit or push** — write the FR content, following the format defined in **FR**, to disk at **.fr.md**'s path (this must be a real file, not just text in your reply). Read the file back to confirm it was actually written before moving on. Then run `python .plato/scripts/status_cli.py fixer wait <ticket-number>`
 
-### Step 5: Echo
+### Step 6: Echo
 
 Echo the content of **.fr.md** to the user, reproducing it **verbatim** in your reply — the FR itself is the report. Do not summarize, reword, or wrap it in your own format.
 

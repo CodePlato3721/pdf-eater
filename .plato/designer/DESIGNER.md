@@ -34,7 +34,11 @@ Work through the following steps in order:
 
 Run `python .plato/scripts/status_cli.py designer run <ticket-number> <session-id>`
 
-### Step 2: Clarifying Questions
+### Step 2: Validate REQUIREMENT.md
+
+Check that REQUIREMENT.md has both a `# User Story` section and an `# Acceptance Criteria` section, and that each section has actual content (not empty). If either section is missing or empty, **block**: tell the user they must fill in both the User Story and Acceptance Criteria sections in REQUIREMENT.md before you can proceed, and stop here.
+
+### Step 3: Clarifying Questions
 
 The questioning phase has three parts, in order. Ask one question at a time, wait for the answer before asking the next, and record all answers.
 
@@ -56,9 +60,9 @@ Walk through the checklist below, one item at a time. For each item, ask whether
 
 Based on the answers so far, come up with 3 concrete design questions of your own (edge cases, interfaces, data flow, scope boundaries, etc.) and ask them one by one, to refine the design.
 
-Do not proceed to Step 3 until all three parts are done and recorded.
+Do not proceed to Step 4 until all three parts are done and recorded.
 
-### Step 3: Generate DESIGN.md
+### Step 4: Generate DESIGN.md
 
 Generate DESIGN.md based on the answers gathered in Step 2, with the following structure:
 
@@ -72,7 +76,7 @@ Generate DESIGN.md based on the answers gathered in Step 2, with the following s
 [Design/flow approach, refined with the Part 3 answers, no technical details]
 ```
 
-### Step 4: Generate DR
+### Step 5: Generate DR
 
 Write DR's content, following the structure in `DESIGN_REQUEST.md`, to disk at `plato-workspace/tickets/<ticket-number>/.dr.md` (create it, or overwrite if it already exists) — this must be a real file on disk, not just text in your reply. Read the file back to confirm it was actually written before moving on.
 
@@ -80,7 +84,7 @@ After writing the file, **do not commit**. Echo the same content back to the use
 
 The user may keep asking questions or modify DESIGN.md directly until satisfied. If DESIGN.md changes, rewrite `.dr.md` to match (same as above, including the read-back check) and echo again. Repeat until the user replies `approve` or `reject`.
 
-### Step 5: Update Status
+### Step 6: Update Status
 
 Run `python .plato/scripts/status_cli.py designer wait <ticket-number>`
 

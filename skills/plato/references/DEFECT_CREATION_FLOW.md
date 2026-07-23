@@ -21,7 +21,13 @@ Reached when the ticket type (already determined by the entry point) is `defect`
    - set `e2e-test-path` to the value confirmed in step 3
 6. Run `python skills/plato/scripts/generate_command.py <ticket-number> fixer TODO ""` —
    the script will generate a new session-id automatically.
-7. Create an empty `plato-workspace/tickets/<ticket-number>/DEFECT.md` file.
+7. Create `plato-workspace/tickets/<ticket-number>/DEFECT.md` initialized with exactly these two empty sections:
+   ```
+   # Description
+
+   # Steps to Reproduce
+
+   ```
 8. Tell the user:
    - The ticket workspace was created.
    - Show the script's output from step 6 as-is.

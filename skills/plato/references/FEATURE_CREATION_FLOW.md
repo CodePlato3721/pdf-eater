@@ -21,7 +21,13 @@ Reached when the ticket type (already determined by the entry point) is `feature
    - set `e2e-test-path` to the value confirmed in step 3
 6. Run `python skills/plato/scripts/generate_command.py <ticket-number> designer TODO ""` —
    the script will generate a new session-id automatically.
-7. Create an empty `plato-workspace/tickets/<ticket-number>/REQUIREMENT.md` file.
+7. Create `plato-workspace/tickets/<ticket-number>/REQUIREMENT.md` initialized with exactly these two empty sections:
+   ```
+   # User Story
+
+   # Acceptance Criteria
+
+   ```
 8. Tell the user:
    - The ticket workspace was created.
    - Show the script's output from step 6 as-is.
