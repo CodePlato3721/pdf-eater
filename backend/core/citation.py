@@ -1,13 +1,14 @@
 import re
 from dataclasses import dataclass
 
-from config import CONTEXT_SENTENCES
+from config import CONTEXT_SENTENCES, MIN_CITATION_SIMILARITY
 from core.similarity import cosine_similarity, word_counts
 
 # Metadata "page" (from PDFMinerLoader mode="page") is 0-indexed; citations
 # are shown to users as 1-indexed page numbers.
 PAGE_DISPLAY_OFFSET = 1
 CITATION_TEMPLATE = "\n\n---\nSource (page {page}):\n{quote}"
+NO_SOURCE_FOUND_TEMPLATE = "\n\n---\nNo supporting source found in the document."
 
 _SENTENCE_BOUNDARY = re.compile(r"(?<=[.!?])\s+")
 
@@ -103,11 +104,16 @@ def build_citation_block(documents: list, answer: str) -> str:
         answer: The LLM's generated answer text.
 
     Returns:
-        The formatted citation block, or "" if there are no sentences to cite.
+        The formatted citation block; NO_SOURCE_FOUND_TEMPLATE if the best-matching
+        sentence falls below MIN_CITATION_SIMILARITY; or "" if there are no
+        sentences to cite.
     """
     sentences = build_sentence_pool(documents)
     if not sentences:
         return ""
     hit_index = find_hit_sentence_index(sentences, answer)
+    hit_score = cosine_similarity(word_counts(sentences[hit_index].text), word_counts(answer))
+    if hit_score < MIN_CITATION_SIMILARITY:
+        return NO_SOURCE_FOUND_TEMPLATE
     quote, page = build_quote(sentences, hit_index)
     return format_citation(quote, page)

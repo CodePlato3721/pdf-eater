@@ -133,3 +133,25 @@ class TestAskCitation:
         answer = ask("anything?", app_state)
 
         assert answer == "No support available."
+
+    def test_reports_no_source_found_when_retrieved_chunks_are_unrelated(self, app_state):
+        """If none of the retrieved chunks meaningfully support the answer,
+        the appended block says so instead of quoting an unrelated sentence
+        as if it backed the answer."""
+        sources = [
+            Document(
+                page_content="Act third was the castle hall, and here Hagar appeared.",
+                metadata={"page": 35},
+            )
+        ]
+        app_state.chain = FakeChain(
+            make_chain_result(
+                answer="Professor Friedrich Bhaer first appears when he arrives at the March family home.",
+                sources=sources,
+            )
+        )
+
+        answer = ask("When does Professor Friedrich Bhaer first appear?", app_state)
+
+        assert answer.endswith("No supporting source found in the document.")
+        assert "Hagar" not in answer

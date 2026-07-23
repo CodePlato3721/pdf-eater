@@ -157,3 +157,23 @@ class TestBuildCitationBlock:
         documents = [Document(page_content="   ", metadata={"page": 0})]
 
         assert build_citation_block(documents, answer="anything") == ""
+
+    def test_returns_no_source_found_when_best_match_is_below_threshold(self):
+        """When none of the retrieved sentences meaningfully support the
+        answer, the block must say so instead of quoting the least-dissimilar
+        sentence as if it were supporting evidence."""
+        documents = [
+            Document(
+                page_content="Act third was the castle hall, and here Hagar appeared.",
+                metadata={"page": 35},
+            ),
+        ]
+
+        block = build_citation_block(
+            documents,
+            answer="Professor Friedrich Bhaer first appears when he arrives at the March family home.",
+        )
+
+        assert block == "\n\n---\nNo supporting source found in the document."
+        assert "page 36" not in block
+        assert "Hagar" not in block
