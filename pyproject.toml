@@ -11,4 +11,7 @@ dev-dependencies = [
 
 [tool.pytest.ini_options]
 pythonpath = ["backend"]
-addopts = "--import-mode=prepend"
+addopts = "--import-mode=prepend -m 'not smoke'"
+markers = [
+    "smoke: hits the real OpenAI API (costs money, needs OPENAI_API_KEY); excluded by default, run explicitly with -m smoke",
+]
