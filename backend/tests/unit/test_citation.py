@@ -177,3 +177,35 @@ class TestBuildCitationBlock:
         assert block == "\n\n---\nNo supporting source found in the document."
         assert "page 36" not in block
         assert "Hagar" not in block
+
+    def test_cites_a_correct_but_short_paraphrased_answer(self):
+        """PD-09: a correct, on-topic answer that only loosely echoes the
+        source sentence's wording (e.g. a short factual paraphrase, not a
+        near-verbatim quote) must still be cited — MIN_CITATION_SIMILARITY
+        must not be so strict that it rejects legitimate answers, only
+        wrong-topic ones (see the PD-07/PD-08 Hagar/Bhaer case above, whose
+        score is ~0.09). Note this is a partial fix: at the chosen threshold
+        (0.2) an even terser answer like "...first appears at the age of
+        thirteen." (score ~0.19) still narrowly falls short and would still
+        be reported as unsupported — that residual gap was accepted rather
+        than lowering the threshold further, since going lower starts
+        crowding the known hallucination scores (~0.09-0.12)."""
+        documents = [
+            Document(
+                page_content=(
+                    "Elizabeth or Beth, as every one called her, was a rosy, "
+                    "smooth-haired, bright-eyed girl of thirteen, with a shy "
+                    "manner, a timid voice, and a peaceful expression, which "
+                    "was seldom disturbed."
+                ),
+                metadata={"page": 21},
+            ),
+        ]
+
+        block = build_citation_block(
+            documents,
+            answer='Elizabeth "Beth" first appears as a shy, thirteen-year-old girl.',
+        )
+
+        assert "No supporting source found" not in block
+        assert "page 22" in block

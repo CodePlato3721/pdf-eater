@@ -1,0 +1,10 @@
+{
+    "type": "defect",
+    "title": "Incorrect answer for 'When does Elizabeth \"Beth\" first appear?'",
+    "unit-test-path": "backend/tests/unit",
+    "e2e-test-path": "frontend/tests/e2e",
+    "fixer": {
+        "session-id": "a765c5b8-1d47-45cc-8dc4-cb7ab0bbf3c8",
+        "status": "DONE"
+    }
+}

@@ -10,14 +10,24 @@ from core.http_logging import create_logging_http_client
 # training knowledge. That lets the LLM answer confidently from outside
 # knowledge even when the retrieved context has nothing relevant, producing
 # an answer the citation layer then (correctly) can't support.
+#
+# Two more wording choices matter here (PD-09): the retrieved text is called
+# "the document" rather than "the context" — labelling it "context" invited
+# the model to describe its own prompt input back to the user (e.g. "at the
+# beginning of the context provided") instead of answering the question, even
+# when the retrieved text plainly contained the answer. The model is also
+# told to answer with a specific fact/quote rather than describing the
+# document, for the same reason.
 NOT_FOUND_ANSWER = "I don't know based on the provided document."
 QA_PROMPT = PromptTemplate(
     input_variables=["context", "question"],
     template=(
-        "Answer the question using ONLY the information in the context below. "
+        "Answer the question using ONLY the information in the document below. "
         "Do not use any outside or prior knowledge, even if you already know the answer. "
-        f'If the context does not contain the answer, respond exactly with "{NOT_FOUND_ANSWER}"\n\n'
-        "Context:\n{context}\n\n"
+        "Answer with the specific fact or detail from the document, quoting or paraphrasing "
+        "the relevant passage, rather than describing the document itself. "
+        f'If the document does not contain the answer, respond exactly with "{NOT_FOUND_ANSWER}"\n\n'
+        "Document:\n{context}\n\n"
         "Question: {question}\n"
         "Answer:"
     ),

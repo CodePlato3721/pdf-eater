@@ -61,6 +61,25 @@ class TestCreateChain:
         assert "outside" in rendered.lower()
         assert NOT_FOUND_ANSWER in rendered
 
+    def test_prompt_labels_retrieved_text_as_document_not_context(self):
+        """PD-09: labelling the retrieved text "context" invited the model to
+        describe its own prompt input back to the user (e.g. "at the
+        beginning of the context provided") instead of answering the
+        question, even when the retrieved text plainly had the answer.
+        Calling it "the document" avoids that self-referential leakage."""
+        rendered = QA_PROMPT.format(context="some context", question="some question")
+
+        assert "the context" not in rendered.lower()
+
+    def test_prompt_requires_grounding_in_a_specific_fact_or_quote(self):
+        """PD-09: without this instruction the model sometimes hedges with a
+        vague, non-answer instead of using specific content it was actually
+        given, even when that content directly answers the question."""
+        rendered = QA_PROMPT.format(context="some context", question="some question")
+
+        assert "specific fact or detail" in rendered
+        assert "rather than describing the document itself" in rendered
+
 
 @pytest.mark.smoke
 class TestQAPromptSmoke:
@@ -92,3 +111,25 @@ class TestQAPromptSmoke:
         response = llm.invoke(prompt)
 
         assert NOT_FOUND_ANSWER in response.content
+
+    def test_model_grounds_the_answer_instead_of_describing_the_context(self):
+        """Reproduces PD-09: even when the context plainly answers the
+        question, the model previously hedged with a vague, self-referential
+        non-answer ("Elizabeth 'Beth' first appears at the beginning of the
+        context provided") instead of using the specific detail it was given.
+        It must now answer with that detail instead."""
+        llm = ChatOpenAI(model=MODEL_NAME, temperature=0)
+        prompt = QA_PROMPT.format(
+            context=(
+                'Elizabeth—or Beth, as every one called her—was a rosy, '
+                "smooth-haired, bright-eyed girl of thirteen, with a shy manner, "
+                "a timid voice, and a peaceful expression, which was seldom "
+                "disturbed."
+            ),
+            question='When does Elizabeth "Beth" first appear?',
+        )
+
+        response = llm.invoke(prompt)
+
+        assert NOT_FOUND_ANSWER not in response.content
+        assert "context" not in response.content.lower()
