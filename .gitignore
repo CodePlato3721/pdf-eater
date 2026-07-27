@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 .env
 backend/data/
+.agents/
+.claude/skills/

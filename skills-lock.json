@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "plato": {
+      "source": "CodePlato3721/plato",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "777a8ef69c35833f0a6f4991f2a258da4ffdc051840eb3a5df04e62ac813d0cf"
+    }
+  }
+}
