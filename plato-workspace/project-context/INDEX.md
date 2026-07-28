@@ -14,5 +14,5 @@
 
 | Summary | Path |
 |---|---|
-| | |
+| Backend Q&A pipeline architecture (LangChain/FAISS stack, ingestion flow, `/api/ask` request flow, state, key files) | `plato-workspace/project-context/BACKEND_ARCHITECTURE.md` |
 
