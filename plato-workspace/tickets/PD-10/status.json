@@ -1,0 +1,16 @@
+{
+    "type": "feature",
+    "title": "用户提问后，在调用embedding之前先用 HyDE 生成假回答再 embedding",
+    "designer": {
+        "session-id": "d59697b1-5a52-455c-9ebf-605a165d2b42",
+        "status": "DONE"
+    },
+    "planner": {
+        "session-id": "",
+        "status": "TODO"
+    },
+    "coder": {
+        "status": "TODO",
+        "tasks": []
+    }
+}
