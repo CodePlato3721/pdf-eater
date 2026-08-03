@@ -1,0 +1,16 @@
+{
+    "tasks": [
+        {
+            "id": "TASK-01",
+            "description": "Implement a HyDE retriever component: given a standalone question, call the existing chain LLM to generate a hypothetical answer, then embed that hypothetical answer and run the FAISS similarity search (k=TOP_K) against the vector store using that embedding instead of the raw question. Propagate any LLM call failure as an error (no silent fallback to embedding the raw question). Include unit tests for this component: the hypothetical-answer LLM call happens, the similarity search is run on its embedding (not the raw question's), and an LLM failure propagates as an error.",
+            "tech-stack": "retriever",
+            "business-domain": "qa"
+        },
+        {
+            "id": "TASK-02",
+            "description": "Wire the HyDE retriever into the Q&A chain: update backend/core/chain.py::create_chain() so the ConversationalRetrievalChain uses the new HyDE retriever in place of the default vectorstore retriever, reusing the same LLM instance already used elsewhere in the chain. Rest of the flow (question condensing, stuffing retrieved chunks into the QA prompt, final answer generation, chat history update) stays unchanged. Include a test verifying the end-to-end /api/ask flow actually exercises the question-to-hypothetical-answer conversion (the design's stated acceptance check).",
+            "tech-stack": "chain",
+            "business-domain": "qa"
+        }
+    ]
+}
