@@ -11,6 +11,21 @@
     },
     "coder": {
         "status": "TODO",
-        "tasks": []
+        "tasks": [
+            {
+                "id": "TASK-01",
+                "status": "DONE",
+                "coder": {
+                    "session-id": "607fb62a-9075-420e-a6dc-54e33550917e"
+                }
+            },
+            {
+                "id": "TASK-02",
+                "status": "DONE",
+                "coder": {
+                    "session-id": "f2b1231b-2675-466d-9c00-830b8a4896c6"
+                }
+            }
+        ]
     }
 }

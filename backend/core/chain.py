@@ -2,8 +2,9 @@ from langchain_openai import ChatOpenAI
 from langchain_classic.chains import ConversationalRetrievalChain
 from langchain_core.prompts import PromptTemplate
 from langchain_core.vectorstores import VectorStore
-from config import MODEL_NAME, TOP_K
+from config import MODEL_NAME
 from core.http_logging import create_logging_http_client
+from core.hyde_retriever import HydeRetriever
 
 # LangChain's default stuff-QA prompt only says "if you don't know, say you
 # don't know" — it never forbids the model from falling back on its own
@@ -44,12 +45,10 @@ def create_chain(vectorstore: VectorStore):
     Returns:
         ConversationalRetrievalChain instance.
     """
-    retriever = vectorstore.as_retriever(
-        search_type="similarity",
-        search_kwargs={"k": TOP_K},
-    )
+    llm = ChatOpenAI(model=MODEL_NAME, temperature=0, http_client=create_logging_http_client("LLM"))
+    retriever = HydeRetriever(vectorstore=vectorstore, llm=llm)
     qa = ConversationalRetrievalChain.from_llm(
-        llm=ChatOpenAI(model=MODEL_NAME, temperature=0, http_client=create_logging_http_client("LLM")),
+        llm=llm,
         retriever=retriever,
         return_source_documents=True,
         return_generated_question=True,
