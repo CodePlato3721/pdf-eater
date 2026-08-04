@@ -77,3 +77,70 @@ class TestLoadHistory:
             st.load_history()
 
         assert st.chat_history == []
+
+
+class TestSaveUploadedFiles:
+    """Tests for AppState.save_uploaded_files()"""
+
+    def test_save_uploaded_files_writes_json_and_creates_parent_dir(self, tmp_path):
+        """save_uploaded_files() writes loaded_files as JSON, creating the data dir."""
+        files_file = tmp_path / "data" / "uploaded_files.json"
+
+        with patch.object(state_module, "UPLOADED_FILES_PATH", str(files_file)):
+            st = AppState()
+            st.loaded_files = ["a.pdf", "b.pdf"]
+            st.save_uploaded_files()
+
+        assert json.loads(files_file.read_text(encoding="utf-8")) == ["a.pdf", "b.pdf"]
+
+    def test_save_uploaded_files_replaces_not_appends_previous_contents(self, tmp_path):
+        """save_uploaded_files() fully replaces the persisted file list rather than appending."""
+        files_file = tmp_path / "uploaded_files.json"
+
+        with patch.object(state_module, "UPLOADED_FILES_PATH", str(files_file)):
+            st = AppState()
+            st.loaded_files = ["a.pdf"]
+            st.save_uploaded_files()
+            st.loaded_files = ["c.pdf"]
+            st.save_uploaded_files()
+
+        assert json.loads(files_file.read_text(encoding="utf-8")) == ["c.pdf"]
+
+
+class TestLoadUploadedFiles:
+    """Tests for AppState.load_uploaded_files()"""
+
+    def test_load_uploaded_files_populates_loaded_files_from_json(self, tmp_path):
+        """load_uploaded_files() populates loaded_files from uploaded_files.json when it exists."""
+        files_file = tmp_path / "uploaded_files.json"
+        files_data = ["a.pdf", "b.pdf"]
+        files_file.write_text(json.dumps(files_data), encoding="utf-8")
+
+        with patch.object(state_module, "UPLOADED_FILES_PATH", str(files_file)):
+            st = AppState()
+            st.load_uploaded_files()
+
+        assert st.loaded_files == files_data
+
+    def test_load_uploaded_files_keeps_empty_list_when_file_missing(self, tmp_path):
+        """load_uploaded_files() leaves loaded_files as [] when uploaded_files.json is absent,
+        without creating the file."""
+        files_file = tmp_path / "uploaded_files.json"
+
+        with patch.object(state_module, "UPLOADED_FILES_PATH", str(files_file)):
+            st = AppState()
+            st.load_uploaded_files()
+
+        assert st.loaded_files == []
+        assert not files_file.exists()
+
+    def test_load_uploaded_files_resets_to_empty_on_corrupt_file(self, tmp_path):
+        """load_uploaded_files() falls back to [] instead of raising on invalid JSON."""
+        files_file = tmp_path / "uploaded_files.json"
+        files_file.write_text("{not valid json", encoding="utf-8")
+
+        with patch.object(state_module, "UPLOADED_FILES_PATH", str(files_file)):
+            st = AppState()
+            st.load_uploaded_files()
+
+        assert st.loaded_files == []

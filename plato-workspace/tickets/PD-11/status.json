@@ -1,0 +1,24 @@
+{
+    "type": "feature",
+    "title": "用 JSON 文件持久化已上传文档列表",
+    "designer": {
+        "session-id": "f03894c9-cbe3-45a3-b0f5-bcf6a93fce04",
+        "status": "DONE"
+    },
+    "planner": {
+        "session-id": "dfb66518-98f9-4254-8adc-060600724c98",
+        "status": "DONE"
+    },
+    "coder": {
+        "status": "TODO",
+        "tasks": [
+            {
+                "id": "TASK-01",
+                "status": "WAITING",
+                "coder": {
+                    "session-id": "59ba7962-a787-4d16-9a17-bb319e3e4d27"
+                }
+            }
+        ]
+    }
+}

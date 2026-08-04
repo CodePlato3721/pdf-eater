@@ -39,12 +39,15 @@ def ingest(files: list[tuple[str, bytes]], app_state: AppState = state) -> None:
     save_vectorstore(vectorstore, FAISS_INDEX_PATH)
     app_state.chain = create_chain(vectorstore)
     app_state.loaded_files = [name for name, _ in files]
+    app_state.save_uploaded_files()
     app_state.chat_history = []
     app_state.save_history()
 
 
 def restore(app_state: AppState = state) -> None:
-    """Rebuild the QA chain from the persisted FAISS index and reload history."""
+    """Rebuild the QA chain from the persisted FAISS index, reload the uploaded
+    file list, and reload history."""
+    index_restore_failed = False
     if os.path.isdir(FAISS_INDEX_PATH):
         try:
             vectorstore = load_vectorstore(FAISS_INDEX_PATH)
@@ -52,5 +55,11 @@ def restore(app_state: AppState = state) -> None:
         except Exception as exc:
             logger.error("Failed to restore FAISS index: %s. Starting with empty state.", exc)
             app_state.chain = None
+            index_restore_failed = True
+
+    if index_restore_failed:
+        app_state.loaded_files = []
+    else:
+        app_state.load_uploaded_files()
 
     app_state.load_history()

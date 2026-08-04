@@ -4,6 +4,7 @@ MODEL_NAME = "gpt-3.5-turbo"
 TOP_K = 4
 FAISS_INDEX_PATH = "data/faiss_index"
 HISTORY_PATH = "data/history.json"
+UPLOADED_FILES_PATH = "data/uploaded_files.json"
 # Sentences included before/after the hit sentence in a citation quote block.
 CONTEXT_SENTENCES = 2
 # Minimum cosine similarity a hit sentence must have with the answer to be

@@ -5,6 +5,7 @@ Run from backend/:
     .venv\\Scripts\\python.exe -m pytest tests/unit/test_ingestion.py -v
 """
 import json
+import os
 
 import pytest
 from unittest.mock import MagicMock, patch
@@ -93,6 +94,55 @@ class TestRestore:
 
         assert st.chat_history == []
 
+    def test_restore_loads_uploaded_files_from_json(self, tmp_path):
+        """restore() populates loaded_files from uploaded_files.json when it exists
+        and the FAISS index restore succeeds."""
+        index_dir = tmp_path / "faiss_index"
+        index_dir.mkdir()
+        files_file = tmp_path / "uploaded_files.json"
+        files_file.write_text(json.dumps(["a.pdf", "b.pdf"]), encoding="utf-8")
+
+        with patch.object(ingestion_module, "FAISS_INDEX_PATH", str(index_dir)), \
+             patch.object(state_module, "HISTORY_PATH", str(tmp_path / "history.json")), \
+             patch.object(state_module, "UPLOADED_FILES_PATH", str(files_file)), \
+             patch.object(ingestion_module, "load_vectorstore", return_value=MagicMock()), \
+             patch.object(ingestion_module, "create_chain", return_value=MagicMock()):
+
+            st = AppState()
+            restore(app_state=st)
+
+        assert st.loaded_files == ["a.pdf", "b.pdf"]
+
+    def test_restore_empty_loaded_files_when_nothing_ever_uploaded(self, tmp_path):
+        """A fresh restore() with no uploaded_files.json and no FAISS index leaves
+        loaded_files empty, without error."""
+        with patch.object(ingestion_module, "FAISS_INDEX_PATH", str(tmp_path / "nonexistent")), \
+             patch.object(state_module, "HISTORY_PATH", str(tmp_path / "history.json")), \
+             patch.object(state_module, "UPLOADED_FILES_PATH", str(tmp_path / "uploaded_files.json")):
+
+            st = AppState()
+            restore(app_state=st)  # must not raise
+
+        assert st.loaded_files == []
+
+    def test_restore_clears_loaded_files_when_faiss_corrupted(self, tmp_path):
+        """restore() clears loaded_files rather than loading stale uploaded_files.json
+        content when the FAISS index fails to load."""
+        index_dir = tmp_path / "faiss_index"
+        index_dir.mkdir()
+        files_file = tmp_path / "uploaded_files.json"
+        files_file.write_text(json.dumps(["stale.pdf"]), encoding="utf-8")
+
+        with patch.object(ingestion_module, "FAISS_INDEX_PATH", str(index_dir)), \
+             patch.object(state_module, "HISTORY_PATH", str(tmp_path / "history.json")), \
+             patch.object(state_module, "UPLOADED_FILES_PATH", str(files_file)), \
+             patch.object(ingestion_module, "load_vectorstore", side_effect=Exception("corrupt")):
+
+            st = AppState()
+            restore(app_state=st)
+
+        assert st.loaded_files == []
+
 
 class TestIngest:
     """Tests for ingestion.ingest()"""
@@ -132,6 +182,7 @@ class TestIngest:
 
         with patch.object(ingestion_module, "FAISS_INDEX_PATH", index_path), \
              patch.object(state_module, "HISTORY_PATH", str(history_file)), \
+             patch.object(state_module, "UPLOADED_FILES_PATH", str(tmp_path / "uploaded_files.json")), \
              patch.object(ingestion_module, "is_readable", return_value=(True, "")), \
              patch.object(ingestion_module, "load_and_split", return_value=[MagicMock()]), \
              patch.object(ingestion_module, "create_vectorstore", return_value=fake_vectorstore), \
@@ -143,6 +194,53 @@ class TestIngest:
 
         mock_save.assert_called_once_with(fake_vectorstore, index_path)
         assert json.loads(history_file.read_text(encoding="utf-8")) == []
+
+    def test_ingest_persists_uploaded_files_list(self, tmp_path):
+        """ingest() writes loaded_files to UPLOADED_FILES_PATH, fully replacing
+        its previous contents."""
+        files_file = tmp_path / "uploaded_files.json"
+        files_file.write_text(json.dumps(["old.pdf"]), encoding="utf-8")
+
+        with patch.object(ingestion_module, "FAISS_INDEX_PATH", str(tmp_path / "faiss_index")), \
+             patch.object(state_module, "HISTORY_PATH", str(tmp_path / "history.json")), \
+             patch.object(state_module, "UPLOADED_FILES_PATH", str(files_file)), \
+             patch.object(ingestion_module, "is_readable", return_value=(True, "")), \
+             patch.object(ingestion_module, "load_and_split", return_value=[MagicMock()]), \
+             patch.object(ingestion_module, "create_vectorstore", return_value=MagicMock()), \
+             patch.object(ingestion_module, "save_vectorstore"), \
+             patch.object(ingestion_module, "create_chain", return_value=MagicMock()):
+
+            st = AppState()
+            ingest([("a.pdf", b"pdf-a"), ("b.pdf", b"pdf-b")], app_state=st)
+
+        assert json.loads(files_file.read_text(encoding="utf-8")) == ["a.pdf", "b.pdf"]
+
+    def test_ingest_then_restore_round_trip_survives_restart(self, tmp_path):
+        """Simulating a restart (ingest() followed by restore()), loaded_files
+        reflects the previously uploaded filenames."""
+        index_path = str(tmp_path / "faiss_index")
+
+        with patch.object(ingestion_module, "FAISS_INDEX_PATH", index_path), \
+             patch.object(state_module, "HISTORY_PATH", str(tmp_path / "history.json")), \
+             patch.object(state_module, "UPLOADED_FILES_PATH", str(tmp_path / "uploaded_files.json")), \
+             patch.object(ingestion_module, "is_readable", return_value=(True, "")), \
+             patch.object(ingestion_module, "load_and_split", return_value=[MagicMock()]), \
+             patch.object(ingestion_module, "create_vectorstore", return_value=MagicMock()), \
+             patch.object(ingestion_module, "save_vectorstore") as mock_save, \
+             patch.object(ingestion_module, "load_vectorstore", return_value=MagicMock()), \
+             patch.object(ingestion_module, "create_chain", return_value=MagicMock()):
+
+            def fake_save_vectorstore(vs, path):
+                os.makedirs(path, exist_ok=True)
+            mock_save.side_effect = fake_save_vectorstore
+
+            ingest_state = AppState()
+            ingest([("a.pdf", b"pdf-a"), ("b.pdf", b"pdf-b")], app_state=ingest_state)
+
+            restart_state = AppState()
+            restore(app_state=restart_state)
+
+        assert restart_state.loaded_files == ["a.pdf", "b.pdf"]
 
     def test_ingest_raises_and_leaves_state_untouched_when_unreadable(self, tmp_path):
         """ingest() raises PDFNotReadableError naming the bad file and does not

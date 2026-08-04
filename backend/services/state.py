@@ -1,10 +1,5 @@
-import json
-import logging
-import os
-
-from config import HISTORY_PATH
-
-logger = logging.getLogger(__name__)
+from config import HISTORY_PATH, UPLOADED_FILES_PATH
+from utils.file_utils import load_json, save_json
 
 
 class AppState:
@@ -20,11 +15,7 @@ class AppState:
 
     def save_history(self) -> None:
         """Persist chat_history to HISTORY_PATH, creating the parent dir if needed."""
-        parent_dir = os.path.dirname(HISTORY_PATH)
-        if parent_dir:
-            os.makedirs(parent_dir, exist_ok=True)
-        with open(HISTORY_PATH, "w", encoding="utf-8") as f:
-            json.dump(self.chat_history, f, ensure_ascii=False)
+        save_json(HISTORY_PATH, self.chat_history)
 
     def clear_history(self) -> None:
         """Reset chat_history and persist it, clearing the history file too."""
@@ -33,13 +24,16 @@ class AppState:
 
     def load_history(self) -> None:
         """Reload chat_history from HISTORY_PATH; falls back to [] on errors."""
-        if os.path.isfile(HISTORY_PATH):
-            try:
-                with open(HISTORY_PATH, "r", encoding="utf-8") as f:
-                    self.chat_history = json.load(f)
-            except Exception as exc:
-                logger.error("Failed to restore chat history: %s", exc)
-                self.chat_history = []
+        self.chat_history = load_json(HISTORY_PATH, [])
+
+    def save_uploaded_files(self) -> None:
+        """Persist loaded_files to UPLOADED_FILES_PATH, fully replacing its contents."""
+        save_json(UPLOADED_FILES_PATH, self.loaded_files)
+
+    def load_uploaded_files(self) -> None:
+        """Reload loaded_files from UPLOADED_FILES_PATH; falls back to [] if the
+        file is missing or on read error."""
+        self.loaded_files = load_json(UPLOADED_FILES_PATH, [])
 
 
 state = AppState()
